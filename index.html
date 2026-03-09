@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS DevOps Command Center</title>
+<meta name="description" content="300+ searchable AWS CLI, Terraform, Docker, Kubernetes, Git, Ansible, Helm and Linux commands. Search in plain English. One-click copy. Free, no login required.">
+<meta name="keywords" content="AWS CLI, Terraform, Docker, Kubernetes, DevOps, command reference, cheatsheet, cloud commands, AWS cheatsheet">
+<meta name="author" content="aws-devops-command-center">
+<meta property="og:title" content="AWS DevOps Command Center">
+<meta property="og:description" content="300+ searchable cloud & DevOps commands. Type in plain English, copy in one click.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#07090d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #07090d;
+  --sidebar:   #0b0e15;
+  --surface:   #0f1420;
+  --card:      #131928;
+  --border:    #1c2535;
+  --border2:   #253040;
+  --text:      #e2eaf6;
+  --muted:     #4e6480;
+  --faint:     #28384f;
+  --tool:      #ff9900;
+  --tool-dim:  rgba(255,153,0,0.10);
+  --tool-dim2: rgba(255,153,0,0.05);
+  --green:     #22c55e;
+  --mono:      'JetBrains Mono', monospace;
+  --ui:        'Outfit', sans-serif;
+  --code-text: #9ec8f0;
+  --code-bg:   rgba(0,0,0,0.35);
+  --code-bd:   #28384f;
+  --topbar-bg: rgba(7,9,13,0.96);
+}
+
+body.light {
+  --bg:        #f0f4f8;
+  --sidebar:   #e4ecf4;
+  --surface:   #ffffff;
+  --card:      #ffffff;
+  --border:    #c8d8e8;
+  --border2:   #b0c8dc;
+  --text:      #0d1b2a;
+  --muted:     #4a6a88;
+  --faint:     #9ab4c8;
+  --tool-dim:  rgba(255,153,0,0.12);
+  --tool-dim2: rgba(255,153,0,0.06);
+  --green:     #16a34a;
+  --code-text: #0d5c8a;
+  --code-bg:   #eaf4fc;
+  --code-bd:   #b8d8f0;
+  --topbar-bg: rgba(240,244,248,0.96);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ui);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────── */
+.topbar {
+  height: 52px;
+  background: var(--topbar-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.topbar-brand {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-right: 1px solid var(--border);
+  height: 100%;
+}
+
+.brand-icon {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, #1a2540, #253050);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.brand-text { display: flex; flex-direction: column; gap: 1px; }
+.brand-name { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; line-height: 1; }
+.brand-sub  { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.search-wrap {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+}
+.search-wrap svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+#search {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--ui);
+  padding: 8px 12px 8px 36px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+#search:focus { border-color: var(--tool); box-shadow: 0 0 0 3px var(--tool-dim); }
+#search::placeholder { color: var(--muted); }
+
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+.total-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.total-badge span { color: var(--tool); }
+
+/* ── LAYOUT ─────────────────────────────────────────── */
+.layout { display: flex; flex: 1; }
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+  padding: 12px 0 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  text-transform: uppercase;
+  padding: 6px 14px 8px;
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: var(--ui);
+  border-left: 2px solid transparent;
+  transition: all 0.14s;
+  position: relative;
+}
+
+.tool-btn:hover { background: rgba(255,255,255,0.025); }
+
+.tool-btn.active {
+  background: var(--tool-dim);
+  border-left-color: var(--tool);
+}
+
+.tool-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  font-weight: 800;
+  font-family: var(--mono);
+  transition: all 0.14s;
+  border: 1px solid var(--border2);
+}
+
+.tool-info { flex: 1; min-width: 0; }
+.tool-name { font-size: 13px; font-weight: 600; color: var(--muted); line-height: 1.2; transition: color 0.14s; white-space: nowrap; }
+.tool-btn.active .tool-name { color: var(--text); }
+.tool-btn:hover .tool-name  { color: var(--text); }
+.tool-sub  { font-size: 10px; color: var(--faint); line-height: 1; margin-top: 2px; }
+
+.tool-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--faint);
+  color: var(--bg);
+  flex-shrink: 0;
+  transition: all 0.14s;
+}
+.tool-btn.active .tool-count { background: var(--tool); color: #000; }
+
+.sidebar-div { height: 1px; background: var(--border); margin: 8px 14px; }
+
+/* ── MAIN ─────────────────────────────────────────── */
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Tool header */
+.tool-header {
+  padding: 20px 28px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tool-header-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900;
+  font-family: var(--mono);
+  flex-shrink: 0;
+  border: 1px solid var(--border2);
+}
+
+.tool-header-info { flex: 1; }
+.tool-header-name { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.tool-header-desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+.tool-header-stat {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+}
+
+/* Category filter pills */
+.cat-bar {
+  padding: 14px 28px 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cat-btn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--ui);
+  padding: 5px 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.cat-btn:hover { border-color: var(--tool); color: var(--text); }
+.cat-btn.active { background: var(--tool); border-color: var(--tool); color: #000; font-weight: 700; }
+
+/* Command list */
+.cmd-list {
+  padding: 18px 28px 60px;
+  flex: 1;
+}
+
+/* Note box */
+.note-box {
+  background: var(--tool-dim2);
+  border: 1px solid var(--tool-dim);
+  border-radius: 10px;
+  padding: 11px 15px;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  line-height: 1.65;
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+.note-box .ni { color: var(--tool); flex-shrink:0; margin-top:1px; font-size:13px; }
+.note-box strong { color: var(--text); }
+.note-box code { font-family:var(--mono); font-size:11.5px; color:var(--tool); background:var(--tool-dim); padding:1px 5px; border-radius:3px; }
+
+/* Section */
+.section { margin-bottom: 36px; }
+
+.section-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.section-title .sc { color: var(--tool); font-family: var(--mono); font-size: 10px; }
+
+/* 3-column card grid */
+.cmd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Command card */
+.cmd-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.14s, box-shadow 0.14s;
+  animation: fadeIn 0.2s ease both;
+  display: flex;
+  flex-direction: column;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+.cmd-card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Code block — copy button lives inside here */
+.cmd-code-wrap {
+  position: relative;
+  background: var(--code-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 58px 10px 12px; /* right padding reserves space for "Copy" btn */
+}
+
+.cmd-code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--code-text);
+  word-break: break-all;
+  line-height: 1.6;
+  display: block;
+  transition: color 0.14s;
+}
+.cmd-card:hover .cmd-code { color: var(--tool); }
+
+/* Copy button — text label overlay inside code block */
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--muted);
+  height: 24px;
+  padding: 0 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.14s;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-family: var(--ui);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  opacity: 0;
+}
+.cmd-card:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { border-color: var(--tool); color: var(--tool); background: var(--tool-dim); }
+.copy-btn.ok    { border-color: var(--green); color: var(--green); opacity: 1; background: rgba(34,197,94,0.08); }
+
+/* Description area */
+.cmd-body {
+  padding: 10px 13px 12px;
+  flex: 1;
+}
+
+.cmd-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.cmd-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+/* Empty */
+.empty { display:none; text-align:center; padding:70px 24px; }
+.empty .ei { font-size:40px; opacity:0.25; margin-bottom:12px; }
+.empty h3 { font-size:17px; font-weight:700; color:var(--text); margin-bottom:5px; }
+.empty p  { font-size:13px; color:var(--muted); }
+
+/* Search-all results */
+.search-all-tool-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.sa-icon {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; font-family: var(--mono);
+  border: 1px solid var(--border2);
+}
+.sa-name { font-size: 14px; font-weight: 700; }
+.sa-count { font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: auto; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+/* Theme toggle */
+.theme-btn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.theme-btn:hover { border-color: var(--tool); color: var(--tool); }
+
+@media (max-width: 1200px) {
+  .cmd-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  .sidebar { width: 180px; }
+  .cmd-list { padding: 16px 16px 48px; }
+  .cat-bar { padding: 12px 16px 0; }
+  .tool-header { padding: 16px 16px 0; }
+  .cmd-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+  .topbar-brand { width: auto; }
+  .cmd-grid { grid-template-columns: 1fr; }
+  .copy-btn { opacity: 1; }
+  .total-badge { display: none; }
+  .layout { padding-bottom: 64px; } /* room for bottom nav */
+}
+
+/* ── HAMBURGER (mobile only) ─────────────────────────── */
+.menu-btn {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+}
+.menu-btn:hover { border-color: var(--tool); }
+@media (max-width: 640px) { .menu-btn { display: flex; } }
+
+/* ── DRAWER OVERLAY ──────────────────────────────────── */
+.drawer-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.drawer-overlay.open { opacity: 1; }
+
+.drawer {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 240px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  z-index: 201;
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  padding: 16px 0 32px;
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.drawer-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.drawer-close {
+  margin-left: auto;
+  background: none; border: none;
+  color: var(--muted); font-size: 18px;
+  cursor: pointer; line-height: 1;
+  padding: 2px 4px;
+}
+.drawer-close:hover { color: var(--text); }
+
+/* ── BOTTOM TAB BAR (mobile) ─────────────────────────── */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 64px;
+  background: var(--sidebar);
+  border-top: 1px solid var(--border);
+  z-index: 150;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.bottom-nav::-webkit-scrollbar { display: none; }
+
+.bottom-nav-inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 4px;
+  gap: 2px;
+  min-width: max-content;
+}
+
+.bottom-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.14s;
+  min-width: 60px;
+  font-family: var(--ui);
+  position: relative;
+}
+.bottom-tab:hover { background: rgba(255,255,255,0.04); }
+.bottom-tab.active { background: var(--tool-dim); }
+
+.bottom-tab-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  font-family: var(--mono);
+  border: 1px solid var(--border2);
+  transition: border-color 0.14s;
+}
+.bottom-tab.active .bottom-tab-icon {
+  border-color: var(--tool);
+}
+
+.bottom-tab-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 56px;
+}
+.bottom-tab.active .bottom-tab-label { color: var(--tool); }
+
+/* Active indicator dot */
+.bottom-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--tool);
+}
+
+@media (max-width: 640px) { .bottom-nav { display: block; } }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <button class="menu-btn" onclick="openDrawer()" title="Switch tool">☰</button>
+    <div class="brand-icon">⚡</div>
+    <div class="brand-text">
+      <div class="brand-name">AWS Command Center</div>
+      <div class="brand-sub">AWS DevOps CLI Reference</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="search" placeholder="Search commands in plain English…" autocomplete="off" spellcheck="false"/>
+  </div>
+  <div class="topbar-right">
+    <div class="total-badge"><span id="visibleCount">0</span> commands</div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar"></nav>
+  <!-- MAIN -->
+  <div class="main" id="main"></div>
+</div>
+
+<!-- MOBILE DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="brand-icon">⚡</div>
+    <div class="drawer-title">Select Tool</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div id="drawerNav"></div>
+</div>
+
+<!-- MOBILE BOTTOM TAB BAR -->
+<nav class="bottom-nav" id="bottomNav"></nav>
+
+<script>
+const TOOLS = [
+  {
+    id: 'aws',
+    name: 'AWS CLI',
+    short: 'AWS',
+    color: '#FF9900',
+    bg: '#1a1200',
+    desc: 'Amazon Web Services',
+    note: 'Install: <code>brew install awscli</code>. Configure with <code>aws configure</code>. Use <code>--profile</code> to switch accounts, <code>--region</code> to override region.',
+    categories: [
+      {
+        name: 'Setup & Config',
+        commands: [
+          { cmd: 'aws configure', desc: 'Interactive setup — enter Access Key ID, Secret, default region, and output format. Always run first after install.' },
+          { cmd: 'aws configure --profile myprofile', desc: 'Create a named profile for multiple AWS accounts. Append --profile to any command to use it.' },
+          { cmd: 'aws configure list', desc: 'Show active credentials, region, and output format. Confirms which account you\'re pointed at.' },
+          { cmd: 'aws sts get-caller-identity', desc: 'Confirm which IAM user or role is authenticated. Run before any destructive operation.' },
+        ]
+      },
+      {
+        name: 'S3',
+        commands: [
+          { cmd: 'aws s3 ls', desc: 'List all S3 buckets in the account.' },
+          { cmd: 'aws s3 ls s3://my-bucket/', desc: 'List contents of a bucket or folder prefix.' },
+          { cmd: 'aws s3 cp myfile.txt s3://my-bucket/', desc: 'Upload a local file to S3.' },
+          { cmd: 'aws s3 cp s3://my-bucket/myfile.txt .', desc: 'Download a file from S3 to current directory.' },
+          { cmd: 'aws s3 sync ./local-folder s3://my-bucket/', desc: 'Upload only new or changed files. Perfect for deploys and backups.' },
+          { cmd: 'aws s3 rm s3://my-bucket/file.txt', desc: 'Delete a specific object from S3.' },
+          { cmd: 'aws s3 rm s3://my-bucket/ --recursive', desc: 'Delete all objects under a prefix. Irreversible.' },
+          { cmd: 'aws s3 presign s3://my-bucket/file.txt --expires-in 3600', desc: 'Generate a temporary pre-signed URL valid for 1 hour.' },
+        ]
+      },
+      {
+        name: 'EC2',
+        commands: [
+          { cmd: 'aws ec2 describe-instances', desc: 'List all EC2 instances with IDs, states, types, and IPs.' },
+          { cmd: 'aws ec2 describe-instances --filters Name=instance-state-name,Values=running', desc: 'Filter to only running instances.' },
+          { cmd: 'aws ec2 start-instances --instance-ids i-0abc1234', desc: 'Start a stopped EC2 instance.' },
+          { cmd: 'aws ec2 stop-instances --instance-ids i-0abc1234', desc: 'Stop a running EC2 instance. Billing stops when fully stopped.' },
+          { cmd: 'aws ec2 terminate-instances --instance-ids i-0abc1234', desc: 'Permanently delete an EC2 instance. Cannot be undone.' },
+          { cmd: 'aws ec2 describe-security-groups', desc: 'List all security groups and firewall rules.' },
+        ]
+      },
+      {
+        name: 'IAM',
+        commands: [
+          { cmd: 'aws iam list-users', desc: 'List all IAM users in the account.' },
+          { cmd: 'aws iam list-roles', desc: 'List all IAM roles used by services like Lambda and EC2.' },
+          { cmd: 'aws iam create-user --user-name newuser', desc: 'Create a new IAM user.' },
+          { cmd: 'aws iam create-access-key --user-name myuser', desc: 'Generate Access Key + Secret. Secret shown only once — save immediately.' },
+          { cmd: 'aws iam attach-user-policy --user-name myuser --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess', desc: 'Attach a managed policy to a user.' },
+          { cmd: 'aws iam list-attached-user-policies --user-name myuser', desc: 'Audit all policies attached to an IAM user.' },
+        ]
+      },
+      {
+        name: 'Lambda',
+        commands: [
+          { cmd: 'aws lambda list-functions', desc: 'List all Lambda functions in the region.' },
+          { cmd: 'aws lambda invoke --function-name my-fn output.json', desc: 'Invoke a function and save response to output.json.' },
+          { cmd: 'aws lambda update-function-code --function-name my-fn --zip-file fileb://fn.zip', desc: 'Deploy new code by uploading a zip. Most common redeploy method.' },
+          { cmd: 'aws lambda get-function --function-name my-fn', desc: 'Show runtime, memory, timeout, and environment variables.' },
+          { cmd: 'aws logs tail /aws/lambda/my-fn --follow', desc: 'Stream live CloudWatch logs. Ctrl+C to stop.' },
+        ]
+      },
+      {
+        name: 'CloudFormation',
+        commands: [
+          { cmd: 'aws cloudformation deploy --template-file template.yaml --stack-name my-stack', desc: 'Deploy a stack from a local template. Creates or updates.' },
+          { cmd: 'aws cloudformation describe-stacks --stack-name my-stack', desc: 'Show stack outputs — API URLs, ARNs, bucket names, etc.' },
+          { cmd: 'aws cloudformation delete-stack --stack-name my-stack', desc: 'Delete a stack and all resources it provisioned.' },
+          { cmd: 'aws cloudformation validate-template --template-body file://template.yaml', desc: 'Validate template syntax before deploying.' },
+          { cmd: 'aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE', desc: 'List active stacks. Filter by status.' },
+        ]
+      },
+      {
+        name: 'CloudWatch',
+        commands: [
+          { cmd: 'aws logs describe-log-groups', desc: 'List all CloudWatch Log Groups.' },
+          { cmd: 'aws logs tail /aws/lambda/my-fn --follow', desc: 'Stream live logs from any log group.' },
+          { cmd: 'aws cloudwatch describe-alarms --state-value ALARM', desc: 'List all firing alarms — fast account health check.' },
+          { cmd: 'aws cloudwatch list-metrics --namespace AWS/Lambda', desc: 'List metrics for a namespace. Swap for AWS/EC2, AWS/RDS, etc.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'terraform',
+    name: 'Terraform',
+    short: 'TF',
+    color: '#844FBA',
+    bg: '#100a1a',
+    desc: 'Infrastructure as Code',
+    note: 'Install: <code>brew install terraform</code>. Always run <code>terraform init</code> before plan/apply. Use workspaces to manage environments.',
+    categories: [
+      {
+        name: 'Init & Setup',
+        commands: [
+          { cmd: 'terraform init', desc: 'Initialize a working directory — downloads providers and sets up backend. Always the first command in a new project.' },
+          { cmd: 'terraform init -upgrade', desc: 'Re-initialize and upgrade providers to latest allowed versions.' },
+          { cmd: 'terraform fmt', desc: 'Auto-format all .tf files to canonical style. Run before committing.' },
+          { cmd: 'terraform fmt -recursive', desc: 'Format all .tf files recursively in subdirectories.' },
+          { cmd: 'terraform validate', desc: 'Validate config syntax without connecting to any provider. Good pre-commit check.' },
+          { cmd: 'terraform version', desc: 'Print installed Terraform version.' },
+        ]
+      },
+      {
+        name: 'Plan & Apply',
+        commands: [
+          { cmd: 'terraform plan', desc: 'Preview what Terraform will create, change, or destroy. Always run before apply.' },
+          { cmd: 'terraform plan -out=tfplan', desc: 'Save the plan to a file so apply uses exactly what was reviewed.' },
+          { cmd: 'terraform apply', desc: 'Apply changes to reach desired state. Prompts for confirmation.' },
+          { cmd: 'terraform apply -auto-approve', desc: 'Apply without interactive confirmation. Use carefully in CI/CD.' },
+          { cmd: 'terraform apply tfplan', desc: 'Apply a previously saved plan file. No surprises.' },
+          { cmd: 'terraform apply -target=aws_instance.web', desc: 'Apply changes only to a specific resource. Useful for targeted fixes.' },
+        ]
+      },
+      {
+        name: 'Destroy',
+        commands: [
+          { cmd: 'terraform destroy', desc: 'Destroy all resources managed by this configuration. Prompts for confirmation.' },
+          { cmd: 'terraform destroy -auto-approve', desc: 'Destroy without prompting. Use with extreme caution.' },
+          { cmd: 'terraform destroy -target=aws_instance.web', desc: 'Destroy only a specific resource instead of the entire stack.' },
+        ]
+      },
+      {
+        name: 'State',
+        commands: [
+          { cmd: 'terraform state list', desc: 'List all resources currently tracked in state.' },
+          { cmd: 'terraform state show aws_instance.web', desc: 'Show all attributes of a specific resource in state.' },
+          { cmd: 'terraform state mv aws_instance.old aws_instance.new', desc: 'Rename a resource in state without destroying and recreating it.' },
+          { cmd: 'terraform state rm aws_instance.web', desc: 'Remove a resource from state (does not destroy the real resource).' },
+          { cmd: 'terraform refresh', desc: 'Update state to match real-world infrastructure without making changes.' },
+        ]
+      },
+      {
+        name: 'Workspaces',
+        commands: [
+          { cmd: 'terraform workspace list', desc: 'List all workspaces. The active one is marked with *.' },
+          { cmd: 'terraform workspace new staging', desc: 'Create a new workspace for a separate environment.' },
+          { cmd: 'terraform workspace select staging', desc: 'Switch to an existing workspace.' },
+          { cmd: 'terraform workspace show', desc: 'Print the name of the current workspace.' },
+          { cmd: 'terraform workspace delete staging', desc: 'Delete a workspace. Must switch away from it first.' },
+        ]
+      },
+      {
+        name: 'Output & Import',
+        commands: [
+          { cmd: 'terraform output', desc: 'Print all output values defined in the configuration.' },
+          { cmd: 'terraform output db_endpoint', desc: 'Print a specific output value by name.' },
+          { cmd: 'terraform import aws_instance.web i-0abc1234', desc: 'Import an existing resource into Terraform state without recreating it.' },
+          { cmd: 'terraform console', desc: 'Open an interactive REPL to evaluate expressions against state.' },
+          { cmd: 'terraform graph | dot -Tsvg > graph.svg', desc: 'Generate a visual dependency graph of all resources.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'git',
+    name: 'Git',
+    short: '⎇',
+    color: '#F05032',
+    bg: '#1a0800',
+    desc: 'Version control',
+    note: 'Configure identity first: <code>git config --global user.name</code> and <code>user.email</code>. Use <code>git status</code> liberally — it tells you what to do next.',
+    categories: [
+      {
+        name: 'Setup',
+        commands: [
+          { cmd: 'git config --global user.name "Your Name"', desc: 'Set your name for all commits globally.' },
+          { cmd: 'git config --global user.email "you@example.com"', desc: 'Set your email for all commits globally.' },
+          { cmd: 'git init', desc: 'Initialize a new empty Git repository in the current directory.' },
+          { cmd: 'git clone https://github.com/org/repo.git', desc: 'Clone a remote repository to your local machine.' },
+          { cmd: 'git clone https://github.com/org/repo.git --depth=1', desc: 'Shallow clone — only the latest commit. Much faster for large repos.' },
+        ]
+      },
+      {
+        name: 'Basics',
+        commands: [
+          { cmd: 'git status', desc: 'Show working tree status — staged, unstaged, and untracked files.' },
+          { cmd: 'git add .', desc: 'Stage all changed files for the next commit.' },
+          { cmd: 'git add -p', desc: 'Interactively stage hunks of changes. Lets you review before committing.' },
+          { cmd: 'git commit -m "feat: add user auth"', desc: 'Commit staged changes with a message.' },
+          { cmd: 'git commit --amend --no-edit', desc: 'Add staged changes to the last commit without changing the message.' },
+          { cmd: 'git diff', desc: 'Show unstaged changes.' },
+          { cmd: 'git diff --staged', desc: 'Show changes that are staged and ready to commit.' },
+          { cmd: 'git log --oneline --graph --decorate', desc: 'Compact, visual commit history with branch graph.' },
+        ]
+      },
+      {
+        name: 'Branching',
+        commands: [
+          { cmd: 'git branch', desc: 'List all local branches. The active one has a *.' },
+          { cmd: 'git branch -a', desc: 'List local and remote branches.' },
+          { cmd: 'git checkout -b feature/my-feature', desc: 'Create and switch to a new branch.' },
+          { cmd: 'git switch main', desc: 'Switch to an existing branch (modern syntax).' },
+          { cmd: 'git merge feature/my-feature', desc: 'Merge a branch into the current one.' },
+          { cmd: 'git rebase main', desc: 'Rebase current branch onto main. Cleaner history than merge.' },
+          { cmd: 'git rebase -i HEAD~3', desc: 'Interactive rebase to squash, edit, or reorder the last 3 commits.' },
+          { cmd: 'git branch -d feature/my-feature', desc: 'Delete a merged branch locally.' },
+          { cmd: 'git branch -D feature/my-feature', desc: 'Force-delete a branch even if not merged.' },
+        ]
+      },
+      {
+        name: 'Remote',
+        commands: [
+          { cmd: 'git remote -v', desc: 'List all remote connections with their URLs.' },
+          { cmd: 'git fetch origin', desc: 'Download changes from remote without merging.' },
+          { cmd: 'git pull', desc: 'Fetch and merge changes from remote tracking branch.' },
+          { cmd: 'git pull --rebase', desc: 'Fetch and rebase instead of merge. Keeps history linear.' },
+          { cmd: 'git push origin feature/my-feature', desc: 'Push a branch to the remote.' },
+          { cmd: 'git push --force-with-lease', desc: 'Force-push safely — fails if someone else pushed since your last fetch.' },
+          { cmd: 'git push origin --delete feature/my-feature', desc: 'Delete a remote branch.' },
+        ]
+      },
+      {
+        name: 'Stash & Reset',
+        commands: [
+          { cmd: 'git stash', desc: 'Save uncommitted changes and revert to a clean working tree.' },
+          { cmd: 'git stash pop', desc: 'Apply the most recent stash and remove it from the stack.' },
+          { cmd: 'git stash list', desc: 'Show all saved stashes.' },
+          { cmd: 'git stash drop stash@{0}', desc: 'Delete a specific stash entry.' },
+          { cmd: 'git reset HEAD~1', desc: 'Undo the last commit, keeping changes as unstaged.' },
+          { cmd: 'git reset --hard HEAD~1', desc: 'Undo last commit and discard all changes. Irreversible.' },
+          { cmd: 'git revert HEAD', desc: 'Create a new commit that undoes the last commit. Safe for shared branches.' },
+          { cmd: 'git clean -fd', desc: 'Remove untracked files and directories.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'ansible',
+    name: 'Ansible',
+    short: 'AN',
+    color: '#EE3333',
+    bg: '#1a0505',
+    desc: 'Automation & config mgmt',
+    note: 'Install: <code>pip install ansible</code>. Configure your inventory in <code>/etc/ansible/hosts</code> or use <code>-i inventory.ini</code>. Test connectivity with <code>ansible all -m ping</code>.',
+    categories: [
+      {
+        name: 'Inventory',
+        commands: [
+          { cmd: 'ansible all --list-hosts', desc: 'List all hosts in the default inventory.' },
+          { cmd: 'ansible all --list-hosts -i inventory.ini', desc: 'List hosts from a specific inventory file.' },
+          { cmd: 'ansible-inventory --list', desc: 'Show full inventory in JSON format with variables.' },
+          { cmd: 'ansible-inventory --graph', desc: 'Show inventory as a visual tree of groups and hosts.' },
+        ]
+      },
+      {
+        name: 'Ad-hoc Commands',
+        commands: [
+          { cmd: 'ansible all -m ping', desc: 'Ping all hosts to check SSH connectivity. Great first test.' },
+          { cmd: 'ansible webservers -m shell -a "uptime"', desc: 'Run a shell command on a group of hosts.' },
+          { cmd: 'ansible all -m copy -a "src=file.txt dest=/tmp/file.txt"', desc: 'Copy a file to all managed hosts.' },
+          { cmd: 'ansible all -m apt -a "name=nginx state=present" -b', desc: 'Install a package on all hosts (-b = become root).' },
+          { cmd: 'ansible all -m service -a "name=nginx state=restarted" -b', desc: 'Restart a service on all hosts.' },
+          { cmd: 'ansible all -m setup', desc: 'Gather and display facts about all hosts (OS, IP, memory, etc.).' },
+        ]
+      },
+      {
+        name: 'Playbooks',
+        commands: [
+          { cmd: 'ansible-playbook site.yml', desc: 'Run a playbook against the default inventory.' },
+          { cmd: 'ansible-playbook site.yml -i inventory.ini', desc: 'Run a playbook with a specific inventory file.' },
+          { cmd: 'ansible-playbook site.yml --check', desc: 'Dry-run — show what would change without making any changes.' },
+          { cmd: 'ansible-playbook site.yml --diff', desc: 'Show file diffs when templates or files are changed.' },
+          { cmd: 'ansible-playbook site.yml --limit webservers', desc: 'Run the playbook only on hosts in the webservers group.' },
+          { cmd: 'ansible-playbook site.yml --tags deploy', desc: 'Run only tasks tagged with "deploy".' },
+          { cmd: 'ansible-playbook site.yml --skip-tags notify', desc: 'Skip all tasks tagged "notify".' },
+          { cmd: 'ansible-playbook site.yml -e "version=1.2 env=prod"', desc: 'Pass extra variables at runtime.' },
+          { cmd: 'ansible-playbook site.yml -v', desc: 'Verbose mode. Use -vv or -vvv for more detail.' },
+        ]
+      },
+      {
+        name: 'Vault',
+        commands: [
+          { cmd: 'ansible-vault create secrets.yml', desc: 'Create a new encrypted secrets file.' },
+          { cmd: 'ansible-vault edit secrets.yml', desc: 'Edit an encrypted file in your default editor.' },
+          { cmd: 'ansible-vault encrypt vars.yml', desc: 'Encrypt an existing plaintext file.' },
+          { cmd: 'ansible-vault decrypt vars.yml', desc: 'Decrypt an encrypted file to plaintext.' },
+          { cmd: 'ansible-vault view secrets.yml', desc: 'View the contents of an encrypted file without decrypting it.' },
+          { cmd: 'ansible-playbook site.yml --ask-vault-pass', desc: 'Run a playbook and prompt for vault password.' },
+        ]
+      },
+      {
+        name: 'Galaxy',
+        commands: [
+          { cmd: 'ansible-galaxy install geerlingguy.nginx', desc: 'Install a role from Ansible Galaxy.' },
+          { cmd: 'ansible-galaxy install -r requirements.yml', desc: 'Install all roles listed in a requirements file.' },
+          { cmd: 'ansible-galaxy list', desc: 'List all installed roles.' },
+          { cmd: 'ansible-galaxy init my-role', desc: 'Create a new role with the standard directory structure.' },
+          { cmd: 'ansible-galaxy collection install community.aws', desc: 'Install a collection from Galaxy.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'docker',
+    name: 'Docker',
+    short: '🐳',
+    color: '#2496ED',
+    bg: '#040f1e',
+    desc: 'Container platform',
+    note: 'Install Docker Desktop from <code>docker.com</code>. Use <code>docker compose</code> for multi-container apps. Always tag images before pushing to a registry.',
+    categories: [
+      {
+        name: 'Images',
+        commands: [
+          { cmd: 'docker images', desc: 'List all local images with tags, sizes, and creation dates.' },
+          { cmd: 'docker pull nginx:latest', desc: 'Download an image from Docker Hub or a registry.' },
+          { cmd: 'docker build -t myapp:latest .', desc: 'Build an image from a Dockerfile in the current directory.' },
+          { cmd: 'docker build -t myapp:latest -f Dockerfile.prod .', desc: 'Build using a specific Dockerfile.' },
+          { cmd: 'docker tag myapp:latest myregistry/myapp:v1.0', desc: 'Tag an image with a new name, typically before pushing.' },
+          { cmd: 'docker push myregistry/myapp:v1.0', desc: 'Push an image to a registry. Login first with docker login.' },
+          { cmd: 'docker rmi myapp:latest', desc: 'Remove a local image. Use -f to force if containers use it.' },
+          { cmd: 'docker image prune -a', desc: 'Remove all unused images to free disk space.' },
+        ]
+      },
+      {
+        name: 'Containers',
+        commands: [
+          { cmd: 'docker ps', desc: 'List all running containers.' },
+          { cmd: 'docker ps -a', desc: 'List all containers including stopped ones.' },
+          { cmd: 'docker run -d -p 8080:80 --name webserver nginx', desc: 'Run a container in detached mode, mapping host port 8080 to container port 80.' },
+          { cmd: 'docker run -it ubuntu bash', desc: 'Start a container interactively with a bash shell.' },
+          { cmd: 'docker run --rm myapp', desc: 'Run a container and automatically remove it when it exits.' },
+          { cmd: 'docker stop webserver', desc: 'Gracefully stop a running container (sends SIGTERM).' },
+          { cmd: 'docker start webserver', desc: 'Start a stopped container.' },
+          { cmd: 'docker restart webserver', desc: 'Restart a container.' },
+          { cmd: 'docker rm webserver', desc: 'Remove a stopped container.' },
+          { cmd: 'docker exec -it webserver bash', desc: 'Open a shell inside a running container. Great for debugging.' },
+          { cmd: 'docker logs -f webserver', desc: 'Stream live logs from a container. Ctrl+C to stop.' },
+          { cmd: 'docker inspect webserver', desc: 'Show detailed JSON config and metadata for a container.' },
+        ]
+      },
+      {
+        name: 'Volumes & Networks',
+        commands: [
+          { cmd: 'docker volume ls', desc: 'List all Docker volumes.' },
+          { cmd: 'docker volume create mydata', desc: 'Create a named volume for persistent storage.' },
+          { cmd: 'docker run -v mydata:/data myapp', desc: 'Mount a named volume into a container.' },
+          { cmd: 'docker run -v $(pwd):/app myapp', desc: 'Bind-mount the current directory into a container. Useful for dev.' },
+          { cmd: 'docker volume prune', desc: 'Remove all unused volumes.' },
+          { cmd: 'docker network ls', desc: 'List all Docker networks.' },
+          { cmd: 'docker network create mynet', desc: 'Create a custom bridge network.' },
+          { cmd: 'docker network connect mynet webserver', desc: 'Connect a running container to a network.' },
+        ]
+      },
+      {
+        name: 'Compose',
+        commands: [
+          { cmd: 'docker compose up', desc: 'Start all services defined in docker-compose.yml.' },
+          { cmd: 'docker compose up -d', desc: 'Start all services in detached (background) mode.' },
+          { cmd: 'docker compose up --build', desc: 'Rebuild images before starting services.' },
+          { cmd: 'docker compose down', desc: 'Stop and remove all containers, networks. Preserves volumes.' },
+          { cmd: 'docker compose down -v', desc: 'Stop and remove containers, networks, and volumes.' },
+          { cmd: 'docker compose logs -f', desc: 'Stream live logs from all services.' },
+          { cmd: 'docker compose ps', desc: 'List status of all services in the stack.' },
+          { cmd: 'docker compose exec web bash', desc: 'Open a shell in a running compose service.' },
+          { cmd: 'docker compose pull', desc: 'Pull latest images for all services.' },
+          { cmd: 'docker compose restart web', desc: 'Restart a specific service.' },
+        ]
+      },
+      {
+        name: 'System',
+        commands: [
+          { cmd: 'docker stats', desc: 'Live CPU, memory, and network usage for all running containers.' },
+          { cmd: 'docker system df', desc: 'Show disk usage by images, containers, and volumes.' },
+          { cmd: 'docker system prune', desc: 'Remove stopped containers, unused networks, and dangling images.' },
+          { cmd: 'docker system prune -a --volumes', desc: 'Full cleanup — removes everything unused including volumes. Frees maximum space.' },
+          { cmd: 'docker info', desc: 'Show Docker engine info — version, OS, resources, and configuration.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'k8s',
+    name: 'Kubernetes',
+    short: '☸',
+    color: '#326CE5',
+    bg: '#040c1e',
+    desc: 'Container orchestration',
+    note: 'Install: <code>brew install kubectl</code>. Set context with <code>kubectl config use-context</code>. Always check your current namespace before applying changes.',
+    categories: [
+      {
+        name: 'Context & Config',
+        commands: [
+          { cmd: 'kubectl config get-contexts', desc: 'List all available clusters/contexts and show which is active.' },
+          { cmd: 'kubectl config use-context my-cluster', desc: 'Switch to a different cluster context.' },
+          { cmd: 'kubectl config current-context', desc: 'Show the currently active context.' },
+          { cmd: 'kubectl cluster-info', desc: 'Display cluster endpoint and services.' },
+          { cmd: 'kubectl get namespaces', desc: 'List all namespaces in the cluster.' },
+          { cmd: 'kubectl config set-context --current --namespace=myns', desc: 'Set the default namespace for the current context.' },
+        ]
+      },
+      {
+        name: 'Pods',
+        commands: [
+          { cmd: 'kubectl get pods', desc: 'List all pods in the current namespace.' },
+          { cmd: 'kubectl get pods -A', desc: 'List pods across all namespaces.' },
+          { cmd: 'kubectl get pods -n myns', desc: 'List pods in a specific namespace.' },
+          { cmd: 'kubectl describe pod my-pod', desc: 'Show detailed info including events and conditions. First step when a pod won\'t start.' },
+          { cmd: 'kubectl logs my-pod', desc: 'Print logs from a pod\'s container.' },
+          { cmd: 'kubectl logs -f my-pod', desc: 'Stream live logs. Ctrl+C to stop.' },
+          { cmd: 'kubectl logs my-pod -c my-container', desc: 'Get logs from a specific container in a multi-container pod.' },
+          { cmd: 'kubectl exec -it my-pod -- bash', desc: 'Open a shell inside a running pod. Great for debugging.' },
+          { cmd: 'kubectl delete pod my-pod', desc: 'Delete a pod. If managed by a deployment, it will be recreated.' },
+          { cmd: 'kubectl run debug --image=busybox -it --rm', desc: 'Spin up a temporary debug pod and drop into a shell.' },
+        ]
+      },
+      {
+        name: 'Deployments',
+        commands: [
+          { cmd: 'kubectl get deployments', desc: 'List all deployments and their replica status.' },
+          { cmd: 'kubectl apply -f deployment.yaml', desc: 'Create or update resources from a YAML file.' },
+          { cmd: 'kubectl apply -f ./k8s/', desc: 'Apply all YAML files in a directory.' },
+          { cmd: 'kubectl delete -f deployment.yaml', desc: 'Delete resources defined in a YAML file.' },
+          { cmd: 'kubectl rollout status deployment/my-app', desc: 'Watch a deployment rollout until it completes.' },
+          { cmd: 'kubectl rollout history deployment/my-app', desc: 'Show revision history for a deployment.' },
+          { cmd: 'kubectl rollout undo deployment/my-app', desc: 'Roll back to the previous deployment revision.' },
+          { cmd: 'kubectl rollout undo deployment/my-app --to-revision=2', desc: 'Roll back to a specific revision number.' },
+          { cmd: 'kubectl set image deployment/my-app app=myimage:v2', desc: 'Update the container image for a deployment.' },
+        ]
+      },
+      {
+        name: 'Services & Networking',
+        commands: [
+          { cmd: 'kubectl get services', desc: 'List all services and their cluster IPs and ports.' },
+          { cmd: 'kubectl get ingress', desc: 'List all ingress resources and their rules.' },
+          { cmd: 'kubectl port-forward pod/my-pod 8080:80', desc: 'Forward local port 8080 to pod port 80. Great for local testing.' },
+          { cmd: 'kubectl port-forward svc/my-service 8080:80', desc: 'Port-forward to a service instead of a specific pod.' },
+          { cmd: 'kubectl expose deployment my-app --port=80 --type=LoadBalancer', desc: 'Create a service to expose a deployment.' },
+        ]
+      },
+      {
+        name: 'Scaling & Resources',
+        commands: [
+          { cmd: 'kubectl scale deployment my-app --replicas=5', desc: 'Scale a deployment to a specific number of replicas.' },
+          { cmd: 'kubectl autoscale deployment my-app --min=2 --max=10 --cpu-percent=80', desc: 'Create a HorizontalPodAutoscaler.' },
+          { cmd: 'kubectl top pods', desc: 'Show CPU and memory usage for all pods (requires metrics-server).' },
+          { cmd: 'kubectl top nodes', desc: 'Show CPU and memory usage for all nodes.' },
+          { cmd: 'kubectl get events --sort-by=.metadata.creationTimestamp', desc: 'List cluster events sorted by time — useful for debugging issues.' },
+        ]
+      },
+      {
+        name: 'ConfigMaps & Secrets',
+        commands: [
+          { cmd: 'kubectl get configmaps', desc: 'List all ConfigMaps in the namespace.' },
+          { cmd: 'kubectl describe configmap my-config', desc: 'Show the contents of a ConfigMap.' },
+          { cmd: 'kubectl get secrets', desc: 'List all Secrets in the namespace.' },
+          { cmd: 'kubectl create secret generic my-secret --from-literal=password=mypass', desc: 'Create a secret from a literal value.' },
+          { cmd: 'kubectl create secret generic my-secret --from-file=./creds.json', desc: 'Create a secret from a file.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'helm',
+    name: 'Helm',
+    short: '⛵',
+    color: '#0F7490',
+    bg: '#020d12',
+    desc: 'Kubernetes package manager',
+    note: 'Install: <code>brew install helm</code>. Add repos before installing charts. Always use <code>--dry-run</code> to preview changes before applying them to a cluster.',
+    categories: [
+      {
+        name: 'Repos',
+        commands: [
+          { cmd: 'helm repo add stable https://charts.helm.sh/stable', desc: 'Add a chart repository.' },
+          { cmd: 'helm repo add bitnami https://charts.bitnami.com/bitnami', desc: 'Add the popular Bitnami chart repository.' },
+          { cmd: 'helm repo list', desc: 'List all configured chart repositories.' },
+          { cmd: 'helm repo update', desc: 'Fetch the latest chart info from all configured repos.' },
+          { cmd: 'helm search repo nginx', desc: 'Search all configured repos for charts matching "nginx".' },
+          { cmd: 'helm search hub wordpress', desc: 'Search Artifact Hub (public registry) for charts.' },
+        ]
+      },
+      {
+        name: 'Install & Upgrade',
+        commands: [
+          { cmd: 'helm install my-release bitnami/nginx', desc: 'Install a chart with a release name.' },
+          { cmd: 'helm install my-release ./my-chart', desc: 'Install a chart from a local directory.' },
+          { cmd: 'helm install my-release bitnami/nginx --dry-run', desc: 'Preview what would be installed without actually deploying.' },
+          { cmd: 'helm install my-release bitnami/nginx -f values.yaml', desc: 'Install using a custom values file.' },
+          { cmd: 'helm install my-release bitnami/nginx --set service.type=LoadBalancer', desc: 'Override specific values at install time.' },
+          { cmd: 'helm upgrade my-release bitnami/nginx', desc: 'Upgrade an existing release to a newer chart version.' },
+          { cmd: 'helm upgrade --install my-release bitnami/nginx', desc: 'Install if not present, upgrade if it already exists. Great for CI/CD.' },
+          { cmd: 'helm upgrade my-release bitnami/nginx -f values.yaml', desc: 'Upgrade with a custom values file.' },
+        ]
+      },
+      {
+        name: 'Releases',
+        commands: [
+          { cmd: 'helm list', desc: 'List all deployed releases in the current namespace.' },
+          { cmd: 'helm list -A', desc: 'List releases across all namespaces.' },
+          { cmd: 'helm status my-release', desc: 'Show the status, notes, and resources for a deployed release.' },
+          { cmd: 'helm get values my-release', desc: 'Show the custom values used for a release.' },
+          { cmd: 'helm get manifest my-release', desc: 'Show the rendered Kubernetes manifests for a release.' },
+          { cmd: 'helm history my-release', desc: 'Show the revision history for a release.' },
+          { cmd: 'helm uninstall my-release', desc: 'Delete a release and all its Kubernetes resources.' },
+        ]
+      },
+      {
+        name: 'Rollback',
+        commands: [
+          { cmd: 'helm rollback my-release', desc: 'Roll back a release to the previous revision.' },
+          { cmd: 'helm rollback my-release 2', desc: 'Roll back to a specific revision number.' },
+        ]
+      },
+      {
+        name: 'Chart Development',
+        commands: [
+          { cmd: 'helm create my-chart', desc: 'Scaffold a new chart with the standard directory structure.' },
+          { cmd: 'helm lint ./my-chart', desc: 'Check a chart for errors and best-practice issues.' },
+          { cmd: 'helm template my-release ./my-chart', desc: 'Render chart templates locally and print the output YAML.' },
+          { cmd: 'helm template my-release ./my-chart -f values.yaml', desc: 'Render templates with custom values to check output.' },
+          { cmd: 'helm package ./my-chart', desc: 'Package a chart into a versioned .tgz archive.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'linux',
+    name: 'Linux',
+    short: '🐧',
+    color: '#22C55E',
+    bg: '#011008',
+    desc: 'Shell & system commands',
+    note: 'Universal Linux/macOS commands. Use <code>man COMMAND</code> for full documentation on any command. Prefix destructive commands with <code>echo</code> to preview before running.',
+    categories: [
+      {
+        name: 'Files & Directories',
+        commands: [
+          { cmd: 'ls -lah', desc: 'List directory contents with sizes, permissions, and hidden files in human-readable format.' },
+          { cmd: 'find . -name "*.log" -mtime +7', desc: 'Find files matching a pattern modified more than 7 days ago.' },
+          { cmd: 'find . -type f -size +100M', desc: 'Find files larger than 100MB.' },
+          { cmd: 'du -sh *', desc: 'Show disk usage for each item in the current directory.' },
+          { cmd: 'df -h', desc: 'Show disk space usage for all mounted filesystems.' },
+          { cmd: 'cp -r source/ dest/', desc: 'Recursively copy a directory.' },
+          { cmd: 'rsync -avz source/ user@host:/dest/', desc: 'Efficiently sync files to a remote host, only transferring changes.' },
+          { cmd: 'ln -s /path/to/target linkname', desc: 'Create a symbolic link.' },
+          { cmd: 'tail -f /var/log/syslog', desc: 'Stream a log file in real time.' },
+          { cmd: 'grep -r "ERROR" /var/log/', desc: 'Recursively search for "ERROR" in all log files.' },
+          { cmd: 'grep -n "pattern" file.txt', desc: 'Search for a pattern and show line numbers.' },
+        ]
+      },
+      {
+        name: 'Process Management',
+        commands: [
+          { cmd: 'ps aux | grep nginx', desc: 'Find processes matching "nginx".' },
+          { cmd: 'top', desc: 'Interactive real-time view of CPU and memory usage by process.' },
+          { cmd: 'htop', desc: 'Enhanced top with color, easier navigation, and tree view.' },
+          { cmd: 'kill -9 PID', desc: 'Force-kill a process by PID.' },
+          { cmd: 'pkill nginx', desc: 'Kill all processes matching a name.' },
+          { cmd: 'nohup ./script.sh &', desc: 'Run a command in the background that survives terminal closure.' },
+          { cmd: 'systemctl status nginx', desc: 'Show service status, uptime, and recent logs.' },
+          { cmd: 'systemctl restart nginx', desc: 'Restart a system service.' },
+          { cmd: 'systemctl enable nginx', desc: 'Enable a service to auto-start on boot.' },
+          { cmd: 'journalctl -u nginx -f', desc: 'Stream live systemd service logs.' },
+        ]
+      },
+      {
+        name: 'Network',
+        commands: [
+          { cmd: 'curl -I https://example.com', desc: 'Fetch just the HTTP headers from a URL.' },
+          { cmd: 'curl -X POST -H "Content-Type: application/json" -d \'{"key":"val"}\' https://api.example.com', desc: 'Send a POST request with a JSON body.' },
+          { cmd: 'wget -O output.tar.gz https://example.com/file.tar.gz', desc: 'Download a file and save with a specific name.' },
+          { cmd: 'netstat -tulpn', desc: 'List all open ports and the processes listening on them.' },
+          { cmd: 'ss -tulpn', desc: 'Modern replacement for netstat — faster and more detailed.' },
+          { cmd: 'lsof -i :8080', desc: 'Find which process is using port 8080.' },
+          { cmd: 'ping -c 4 google.com', desc: 'Test network connectivity with 4 ICMP packets.' },
+          { cmd: 'traceroute google.com', desc: 'Show the network path packets take to a destination.' },
+          { cmd: 'ssh -i ~/.ssh/key.pem user@host', desc: 'SSH into a server using a specific key file.' },
+          { cmd: 'ssh -L 5432:localhost:5432 user@host', desc: 'Create an SSH tunnel, forwarding local port 5432 to the remote host.' },
+        ]
+      },
+      {
+        name: 'Permissions',
+        commands: [
+          { cmd: 'chmod 755 script.sh', desc: 'Set file permissions to rwxr-xr-x (owner can execute, others can read).' },
+          { cmd: 'chmod +x script.sh', desc: 'Make a file executable.' },
+          { cmd: 'chown user:group file.txt', desc: 'Change ownership of a file.' },
+          { cmd: 'chown -R www-data:www-data /var/www/', desc: 'Recursively change ownership of a directory.' },
+          { cmd: 'sudo -u www-data whoami', desc: 'Run a command as a different user.' },
+          { cmd: 'umask 022', desc: 'Set default permissions for new files (755 for dirs, 644 for files).' },
+        ]
+      },
+      {
+        name: 'Archives & Compression',
+        commands: [
+          { cmd: 'tar -czf archive.tar.gz /path/to/dir/', desc: 'Create a gzip-compressed tar archive.' },
+          { cmd: 'tar -xzf archive.tar.gz', desc: 'Extract a gzip tar archive.' },
+          { cmd: 'tar -xzf archive.tar.gz -C /target/dir/', desc: 'Extract to a specific directory.' },
+          { cmd: 'tar -tzf archive.tar.gz', desc: 'List contents of a tar.gz without extracting.' },
+          { cmd: 'zip -r archive.zip ./folder/', desc: 'Create a zip archive from a directory.' },
+          { cmd: 'unzip archive.zip -d /target/', desc: 'Extract a zip archive to a directory.' },
+        ]
+      },
+      {
+        name: 'System Info',
+        commands: [
+          { cmd: 'uname -a', desc: 'Show kernel version, OS, and architecture.' },
+          { cmd: 'cat /etc/os-release', desc: 'Display Linux distribution name and version.' },
+          { cmd: 'uptime', desc: 'Show how long the system has been running and load averages.' },
+          { cmd: 'free -h', desc: 'Display total, used, and available RAM in human-readable format.' },
+          { cmd: 'lscpu', desc: 'Display detailed CPU architecture information.' },
+          { cmd: 'env', desc: 'Print all environment variables.' },
+          { cmd: 'export MY_VAR=value', desc: 'Set an environment variable for the current shell session.' },
+          { cmd: 'history | grep "docker"', desc: 'Search command history for a specific term.' },
+        ]
+      },
+    ]
+  },
+];
+
+// ─────────────────────────────────────────────────────
+// State
+let activeTool     = TOOLS[0].id;
+let activeCat      = 'All';
+let searchQuery    = '';
+let searchAllMode  = false;
+
+// ─────────────────────────────────────────────────────
+// THEME
+let isLight = false;
+function toggleTheme() {
+  isLight = !isLight;
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('themeBtn').textContent = isLight ? '🌑' : '🌙';
+}
+
+// ─────────────────────────────────────────────────────
+// SMART SEARCH — synonym map for plain-English queries
+const SYNONYMS = {
+  // listing / viewing
+  list:       ['list','ls','describe','get','show','view','all','ps','find'],
+  show:       ['show','describe','get','list','view','display','print','info','inspect'],
+  view:       ['view','show','describe','get','list','display'],
+  get:        ['get','describe','show','list','fetch','read','view'],
+  find:       ['find','search','locate','grep','list','describe','get'],
+  check:      ['check','status','health','describe','get','info','inspect','show','verify','test','validate','ping'],
+  status:     ['status','health','check','describe','info','inspect','show','get'],
+  inspect:    ['inspect','describe','show','get','info','check','details'],
+  info:       ['info','describe','show','get','inspect','details','status'],
+  details:    ['details','describe','info','inspect','show'],
+
+  // creating / starting
+  create:     ['create','new','add','make','init','setup','install','build','run','start','generate','scaffold','apply'],
+  new:        ['new','create','add','make','init','generate','scaffold'],
+  add:        ['add','create','new','insert','attach','connect','append'],
+  make:       ['make','create','new','build','generate','init'],
+  start:      ['start','run','launch','boot','up','begin','create','apply'],
+  run:        ['run','start','launch','execute','invoke','trigger','apply','up'],
+  launch:     ['launch','start','run','create','boot'],
+  boot:       ['boot','start','run','launch'],
+  init:       ['init','initialize','setup','create','configure','install'],
+  setup:      ['setup','init','configure','install','create'],
+  install:    ['install','setup','init','deploy','add','create'],
+
+  // deleting / stopping
+  delete:     ['delete','remove','rm','destroy','terminate','kill','uninstall','drop','clean','purge'],
+  remove:     ['remove','delete','rm','destroy','terminate','uninstall','purge','clean'],
+  destroy:    ['destroy','delete','remove','terminate','kill','clean','purge'],
+  stop:       ['stop','down','shutdown','halt','kill','pause','terminate'],
+  kill:       ['kill','stop','terminate','delete','remove'],
+  shutdown:   ['shutdown','stop','down','halt','terminate'],
+  terminate:  ['terminate','stop','kill','destroy','delete','remove'],
+  clean:      ['clean','prune','remove','delete','purge','clear'],
+  prune:      ['prune','clean','remove','delete','purge','clear'],
+
+  // deploying / updating
+  deploy:     ['deploy','apply','install','update','push','release','publish','upgrade','rollout','sync'],
+  update:     ['update','upgrade','patch','deploy','apply','change','modify','set','edit'],
+  upgrade:    ['upgrade','update','patch','deploy','apply'],
+  push:       ['push','deploy','upload','publish','sync','send'],
+  apply:      ['apply','deploy','create','update','install'],
+  release:    ['release','deploy','publish','push','upgrade'],
+  publish:    ['publish','push','deploy','release'],
+  sync:       ['sync','upload','push','deploy','rsync','mirror','copy'],
+  upload:     ['upload','push','copy','sync','cp','deploy'],
+  download:   ['download','pull','copy','fetch','get','cp'],
+  pull:       ['pull','download','fetch','get','clone'],
+  copy:       ['copy','cp','clone','duplicate','sync'],
+
+  // networking
+  network:    ['network','networking','port','firewall','security','ingress','egress','route','dns','subnet','vpc'],
+  port:       ['port','expose','forward','listen','netstat','lsof','binding'],
+  firewall:   ['firewall','security','rules','iptables','nsg','sg'],
+  connect:    ['connect','ssh','exec','login','attach','access','shell','remote'],
+  ssh:        ['ssh','connect','login','shell','remote','exec','access'],
+  tunnel:     ['tunnel','forward','proxy','ssh','port'],
+  dns:        ['dns','route53','nameserver','record','zone','domain'],
+  expose:     ['expose','publish','port','service','forward'],
+
+  // logging / monitoring
+  log:        ['log','logs','tail','journal','cloudwatch','monitor','watch','stream','follow','output'],
+  logs:       ['logs','log','tail','journal','cloudwatch','monitor','stream','follow'],
+  monitor:    ['monitor','watch','logs','tail','stream','metrics','alerts','alarms','observe'],
+  watch:      ['watch','monitor','tail','follow','stream','logs'],
+  stream:     ['stream','tail','follow','log','logs','watch'],
+  tail:       ['tail','follow','stream','log','logs','watch'],
+  metric:     ['metric','metrics','monitor','cloudwatch','stats','usage'],
+  metrics:    ['metrics','metric','monitor','cloudwatch','stats','usage'],
+  alarm:      ['alarm','alarms','alert','alerts','monitor','cloudwatch'],
+  alert:      ['alert','alerts','alarm','alarms','monitor'],
+
+  // scaling
+  scale:      ['scale','replicas','resize','autoscale','hpa','instances'],
+  replicas:   ['replicas','scale','pods','instances'],
+  resize:     ['resize','scale','change','update'],
+
+  // rollback / history
+  rollback:   ['rollback','revert','undo','history','previous','restore'],
+  revert:     ['revert','rollback','undo','restore','reset'],
+  undo:       ['undo','revert','rollback','reset','restore'],
+  history:    ['history','log','revision','previous','past','rollback'],
+
+  // secrets / auth
+  secret:     ['secret','secrets','password','credential','token','key','vault','ssm','encrypt','secure'],
+  password:   ['password','secret','credential','token','key','vault','ssm'],
+  credential: ['credential','credentials','secret','password','token','key','auth'],
+  key:        ['key','secret','credential','token','password','auth','apikey'],
+  auth:       ['auth','authenticate','login','credential','token','key','configure'],
+  token:      ['token','key','secret','credential','auth'],
+  encrypt:    ['encrypt','secure','vault','secret','password'],
+  decrypt:    ['decrypt','reveal','vault','secret','password'],
+
+  // ec2/compute synonyms
+  instance:   ['instance','instances','server','vm','machine','ec2','node'],
+  server:     ['server','instance','vm','machine','ec2','node','host'],
+  vm:         ['vm','instance','server','machine','ec2','node'],
+  machine:    ['machine','instance','server','vm','ec2'],
+  compute:    ['compute','ec2','instance','server','vm','machine'],
+
+  // storage
+  storage:    ['storage','s3','bucket','disk','volume','ebs','efs','disk'],
+  bucket:     ['bucket','s3','storage','object','blob'],
+  volume:     ['volume','storage','disk','ebs','mount','pvc','pv'],
+  disk:       ['disk','volume','storage','du','df','ebs'],
+
+  // containers
+  container:  ['container','docker','pod','image','k8s','kubernetes','ecs'],
+  image:      ['image','docker','container','build','pull','push','registry','ecr'],
+  pod:        ['pod','container','k8s','kubernetes','docker'],
+  registry:   ['registry','ecr','hub','repo','repository','image'],
+
+  // configuration
+  config:     ['config','configure','settings','setup','init','profile','context'],
+  configure:  ['configure','config','setup','init','settings'],
+  settings:   ['settings','config','configure','options'],
+  context:    ['context','config','profile','cluster','namespace','switch'],
+  namespace:  ['namespace','ns','context','cluster','environment'],
+  environment:['environment','env','config','profile','workspace','namespace'],
+  profile:    ['profile','account','config','credential','context'],
+  workspace:  ['workspace','environment','profile','context'],
+
+  // file/directory
+  file:       ['file','files','directory','folder','path','ls','find'],
+  files:      ['files','file','directory','folder','path','ls','find'],
+  directory:  ['directory','folder','dir','path','ls'],
+  folder:     ['folder','directory','dir','path','ls'],
+  archive:    ['archive','tar','zip','compress','backup','bundle'],
+  compress:   ['compress','zip','tar','gzip','archive'],
+  extract:    ['extract','unzip','tar','decompress','unpack'],
+  backup:     ['backup','snapshot','export','archive','copy','dump'],
+  snapshot:   ['snapshot','backup','save','copy','export'],
+
+  // process
+  process:    ['process','ps','pid','kill','stop','running','daemon'],
+  restart:    ['restart','reboot','reload','bounce','stop','start'],
+  reboot:     ['reboot','restart','reload'],
+  reload:     ['reload','restart','refresh','reboot'],
+
+  // permissions
+  permission: ['permission','permissions','chmod','chown','auth','access','iam','policy'],
+  access:     ['access','permission','policy','iam','role','auth','connect','ssh'],
+  policy:     ['policy','iam','permission','role','attach','auth','access'],
+  role:       ['role','iam','policy','permission','attach'],
+
+  // debug / troubleshoot
+  debug:      ['debug','logs','exec','shell','describe','inspect','troubleshoot','diagnose'],
+  troubleshoot:['troubleshoot','debug','diagnose','logs','describe','check','inspect'],
+  test:       ['test','check','validate','dry-run','preview','ping','invoke'],
+  validate:   ['validate','lint','check','test','verify','dry-run'],
+  'dry-run':  ['dry-run','preview','check','test','validate'],
+  preview:    ['preview','dry-run','plan','check','test','validate'],
+
+  // misc verbs
+  format:     ['format','fmt','lint','clean','style'],
+  lint:       ['lint','validate','check','format','test'],
+  build:      ['build','compile','package','docker','image','create'],
+  package:    ['package','build','bundle','archive','zip','helm'],
+  template:   ['template','render','generate','yaml','manifest'],
+  output:     ['output','result','print','show','get'],
+  import:     ['import','migrate','move','bring','load'],
+  export:     ['export','output','dump','save','backup'],
+  migrate:    ['migrate','import','move','update'],
+  refresh:    ['refresh','update','sync','reload','fetch'],
+  verify:     ['verify','check','validate','test','confirm'],
+};
+
+// Core match: split query into words, every word must hit something
+function matchesQuery(cmd, desc, catName, toolName, extraTags) {
+  const words = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
+
+  const haystack = [cmd, desc, catName, toolName, ...(extraTags||[])].join(' ').toLowerCase();
+
+  return words.every(word => {
+    // 1. Direct substring match across all text
+    if (haystack.includes(word)) return true;
+    // 2. Synonym expansion
+    const syns = SYNONYMS[word] || [];
+    return syns.some(syn => haystack.includes(syn));
+  });
+}
+
+function setToolCSS(tool) {
+  const r = document.documentElement.style;
+  r.setProperty('--tool',     tool.color);
+  r.setProperty('--tool-dim', hexToRgba(tool.color, 0.10));
+  r.setProperty('--tool-dim2',hexToRgba(tool.color, 0.05));
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ─────────────────────────────────────────────────────
+function renderBottomNav() {
+  const el = document.getElementById('bottomNav');
+  if (!el) return;
+  el.innerHTML = `<div class="bottom-nav-inner">` +
+    TOOLS.map(tool => {
+      const isActive = tool.id === activeTool && !searchAllMode;
+      return `
+        <button class="bottom-tab ${isActive ? 'active' : ''}" onclick="selectTool('${tool.id}')" style="--tool:${tool.color};--tool-dim:${hexToRgba(tool.color,0.12)}">
+          <div class="bottom-tab-icon" style="background:${tool.bg};color:${tool.color}">${tool.short}</div>
+          <div class="bottom-tab-label">${tool.name}</div>
+        </button>`;
+    }).join('') + `</div>`;
+}
+
+function renderDrawerNav() {
+  const el = document.getElementById('drawerNav');
+  if (!el) return;
+  el.innerHTML = TOOLS.map(tool => {
+    const total = tool.categories.reduce((s,c) => s+c.commands.length, 0);
+    const isActive = tool.id === activeTool && !searchAllMode;
+    return `
+      <button class="tool-btn ${isActive ? 'active' : ''}" onclick="selectTool('${tool.id}');closeDrawer()" style="--tool:${tool.color};--tool-dim:${hexToRgba(tool.color,0.10)}">
+        <div class="tool-icon" style="background:${tool.bg};color:${tool.color};border-color:${hexToRgba(tool.color,0.2)}">${tool.short}</div>
+        <div class="tool-info">
+          <div class="tool-name">${tool.name}</div>
+          <div class="tool-sub">${tool.desc}</div>
+        </div>
+        <div class="tool-count">${total}</div>
+      </button>`;
+  }).join('');
+}
+
+function openDrawer() {
+  renderDrawerNav();
+  const overlay = document.getElementById('drawerOverlay');
+  const drawer  = document.getElementById('drawer');
+  overlay.style.display = 'block';
+  requestAnimationFrame(() => {
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+  });
+}
+
+function closeDrawer() {
+  const overlay = document.getElementById('drawerOverlay');
+  const drawer  = document.getElementById('drawer');
+  overlay.classList.remove('open');
+  drawer.classList.remove('open');
+  setTimeout(() => { overlay.style.display = 'none'; }, 260);
+}
+
+// ─────────────────────────────────────────────────────
+function renderSidebar() {
+  const el = document.getElementById('sidebar');
+  el.innerHTML = `<div class="sidebar-label">Tools</div>` +
+    TOOLS.map(tool => {
+      const total = tool.categories.reduce((s,c) => s+c.commands.length, 0);
+      const isActive = tool.id === activeTool && !searchAllMode;
+      return `
+        <button class="tool-btn ${isActive ? 'active' : ''}" onclick="selectTool('${tool.id}')">
+          <div class="tool-icon" style="background:${tool.bg};color:${tool.color};border-color:${hexToRgba(tool.color,0.2)}">${tool.short}</div>
+          <div class="tool-info">
+            <div class="tool-name">${tool.name}</div>
+            <div class="tool-sub">${tool.desc}</div>
+          </div>
+          <div class="tool-count">${total}</div>
+        </button>`;
+    }).join('');
+}
+
+// ─────────────────────────────────────────────────────
+function getTool() { return TOOLS.find(t => t.id === activeTool); }
+
+// ─────────────────────────────────────────────────────
+function renderMain() {
+  if (searchAllMode && searchQuery) {
+    renderSearchAll();
+    return;
+  }
+
+  const tool = getTool();
+  setToolCSS(tool);
+
+  const allCats = ['All', ...tool.categories.map(c => c.name)];
+  if (!allCats.includes(activeCat)) activeCat = 'All';
+
+  // Filter
+  const filtered = tool.categories
+    .filter(c => activeCat === 'All' || c.name === activeCat)
+    .map(c => ({
+      ...c,
+      commands: c.commands.filter(cmd =>
+        !searchQuery || matchesQuery(cmd.cmd, cmd.desc, c.name, tool.name, cmd.tags)
+      )
+    }))
+    .filter(c => c.commands.length > 0);
+
+  const total = filtered.reduce((s,c) => s+c.commands.length, 0);
+  document.getElementById('visibleCount').textContent = total;
+
+  // Cat counts for pills
+  const catCounts = {};
+  tool.categories.forEach(c => {
+    const count = c.commands.filter(cmd =>
+      !searchQuery || matchesQuery(cmd.cmd, cmd.desc, c.name, tool.name, cmd.tags)
+    ).length;
+    catCounts[c.name] = count;
+  });
+  const allCount = Object.values(catCounts).reduce((a,b)=>a+b,0);
+
+  const pillsHTML = `<div class="cat-bar">
+    <button class="cat-btn ${activeCat==='All'?'active':''}" onclick="setCat('All')">All (${allCount})</button>
+    ${tool.categories.map(c => `
+      <button class="cat-btn ${activeCat===c.name?'active':''}" onclick="setCat('${c.name.replace(/'/g,"\\'")}')">
+        ${c.name} ${catCounts[c.name]>0?`(${catCounts[c.name]})`:''}
+      </button>`).join('')}
+  </div>`;
+
+  const emptyHTML = total === 0
+    ? `<div class="empty" style="display:block">
+        <div class="ei">🔍</div>
+        <h3>No commands found</h3>
+        <p>Try a different search or select another category</p>
+       </div>`
+    : '';
+
+  const sectionsHTML = filtered.map(cat => `
+    <div class="section">
+      <div class="section-title">${cat.name} <span class="sc">${cat.commands.length}</span></div>
+      <div class="cmd-grid">
+        ${cat.commands.map((c, i) => `
+          <div class="cmd-card" style="animation-delay:${i*15}ms">
+            <div class="cmd-code-wrap">
+              <code class="cmd-code">${escHtml(c.cmd)}</code>
+              <button class="copy-btn" title="Copy" onclick="copyCmd('${escJs(c.cmd)}',this)">Copy</button>
+            </div>
+            <div class="cmd-body">
+              <div class="cmd-desc">${c.desc}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  document.getElementById('main').innerHTML = `
+    <div class="tool-header">
+      <div class="tool-header-icon" style="background:${tool.bg};color:${tool.color};border-color:${hexToRgba(tool.color,0.25)};font-size:${tool.short.length>2?'16px':'20px'}">${tool.short}</div>
+      <div class="tool-header-info">
+        <div class="tool-header-name" style="color:${tool.color}">${tool.name}</div>
+        <div class="tool-header-desc">${tool.desc}</div>
+      </div>
+      <div class="tool-header-stat" style="border-color:${hexToRgba(tool.color,0.2)};color:${tool.color}">${total} cmd${total!==1?'s':''}</div>
+    </div>
+    ${pillsHTML}
+    <div class="cmd-list">
+      <div class="note-box">
+        <span class="ni">💡</span>
+        <div>${tool.note}</div>
+      </div>
+      ${emptyHTML}
+      ${sectionsHTML}
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+function renderSearchAll() {
+  let totalCount = 0;
+  const results = TOOLS.map(tool => {
+    const matchedCats = tool.categories.map(c => ({
+      ...c,
+      commands: c.commands.filter(cmd =>
+        matchesQuery(cmd.cmd, cmd.desc, c.name, tool.name, cmd.tags)
+      )
+    })).filter(c => c.commands.length > 0);
+    const count = matchedCats.reduce((s,c)=>s+c.commands.length,0);
+    totalCount += count;
+    return { tool, matchedCats, count };
+  }).filter(r => r.count > 0);
+
+  document.getElementById('visibleCount').textContent = totalCount;
+
+  const pillsHTML = `<div class="cat-bar">
+    <button class="cat-btn active">All Tools (${totalCount})</button>
+  </div>`;
+
+  const sectionsHTML = results.map(({ tool, matchedCats }) => `
+    <div class="search-all-tool-header">
+      <div class="sa-icon" style="background:${tool.bg};color:${tool.color};border-color:${hexToRgba(tool.color,0.25)}">${tool.short}</div>
+      <div class="sa-name" style="color:${tool.color}">${tool.name}</div>
+      <div class="sa-count" style="background:${hexToRgba(tool.color,0.12)};color:${tool.color}">${matchedCats.reduce((s,c)=>s+c.commands.length,0)}</div>
+    </div>
+    <div class="cmd-grid">
+      ${matchedCats.map(cat => cat.commands.map((c,i) => `
+        <div class="cmd-card" style="animation-delay:${i*10}ms;--tool:${tool.color};--tool-dim:${hexToRgba(tool.color,0.1)}">
+          <div class="cmd-code-wrap">
+            <code class="cmd-code">${escHtml(c.cmd)}</code>
+            <button class="copy-btn" title="Copy" onclick="copyCmd('${escJs(c.cmd)}',this)">Copy</button>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-desc">${c.desc}</div>
+          </div>
+        </div>`).join('')).join('')}
+    </div>
+  `).join('');
+
+  const emptyHTML = totalCount === 0
+    ? `<div class="cmd-list"><div class="empty" style="display:block"><div class="ei">🔍</div><h3>No commands found</h3><p>Try a broader search term</p></div></div>`
+    : `<div class="cmd-list">${sectionsHTML}</div>`;
+
+  document.getElementById('main').innerHTML = `
+    <div class="tool-header">
+      <div class="tool-header-icon" style="background:#1a2030;color:#aac8f0;font-size:18px">🔍</div>
+      <div class="tool-header-info">
+        <div class="tool-header-name" style="color:#aac8f0">Search results for "${escHtml(searchQuery)}"</div>
+        <div class="tool-header-desc">Across all ${TOOLS.length} tools</div>
+      </div>
+      <div class="tool-header-stat">${totalCount} matches</div>
+    </div>
+    ${pillsHTML}
+    ${emptyHTML}`;
+}
+
+// ─────────────────────────────────────────────────────
+function selectTool(id) {
+  activeTool  = id;
+  activeCat   = 'All';
+  searchAllMode = false;
+  document.getElementById('search').value = '';
+  searchQuery = '';
+  renderSidebar();
+  renderBottomNav();
+  renderMain();
+  document.querySelector('.main').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function setCat(cat) {
+  activeCat = cat;
+  renderMain();
+}
+
+function copyCmd(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  if (searchQuery.length > 1) {
+    searchAllMode = true;
+    renderSidebar();
+    renderBottomNav();
+    renderSearchAll();
+  } else {
+    searchAllMode = false;
+    renderSidebar();
+    renderBottomNav();
+    renderMain();
+  }
+});
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escJs(s)   { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+// Init
+renderSidebar();
+renderBottomNav();
+renderMain();
+</script>
+</body>
+</html>

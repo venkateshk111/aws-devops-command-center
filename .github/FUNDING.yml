@@ -1,0 +1,11 @@
+# AWS DevOps Command Center — GitHub Sponsor Button
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+# Replace "yourusername" with your actual GitHub username
+
+github: [venkateshk111]
+
+# Uncomment any others you use:
+# ko_fi: yourusername
+buy_me_a_coffee: venkatesh111
+# patreon: yourusername
+# custom: ["https://yoursite.com/donate"]
