@@ -54,7 +54,7 @@
 
 ## ✨ Features
 
-- 🔍 **Smart search** - type plain English (`list ec2 instances`, `deploy lambda`, `check logs`) - synonyms and intent understood, no need to know exact command names
+- 🔍 **Smart search** - type plain English (`list ec2 instances`, `deploy lambda`, `check logs`)
 - 📋 **One-click copy** - hover any command card and hit Copy
 - 🌙 **Dark / Light theme** - toggle in the top-right corner
 - 📱 **Mobile friendly** - scrollable bottom tab bar + slide-in drawer on phones
