@@ -16,12 +16,12 @@
 
 <table>
 <tr>
-<td><img src="./imgs/website-01.png" width="350"></td>
-<td><img src="./imgs/website-02.png" width="350"></td>
+<td><img src="./imgs/website-01.png" width="850"></td>
+<td><img src="./imgs/website-02.png" width="850"></td>
 </tr>
 <tr>
-<td><img src="./imgs/website-03.png" width="350"></td>
-<td><img src="./imgs/website-04.png" width="350"></td>
+<td><img src="./imgs/website-03.png" width="850"></td>
+<td><img src="./imgs/website-04.png" width="850"></td>
 </tr>
 </table>
 
