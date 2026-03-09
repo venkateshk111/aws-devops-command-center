@@ -690,20 +690,105 @@ const TOOLS = [
           { cmd: 'aws configure', desc: 'Interactive setup — enter Access Key ID, Secret, default region, and output format. Always run first after install.' },
           { cmd: 'aws configure --profile myprofile', desc: 'Create a named profile for multiple AWS accounts. Append --profile to any command to use it.' },
           { cmd: 'aws configure list', desc: 'Show active credentials, region, and output format. Confirms which account you\'re pointed at.' },
+          { cmd: 'aws configure list-profiles', desc: 'List all configured named profiles on your machine.' },
           { cmd: 'aws sts get-caller-identity', desc: 'Confirm which IAM user or role is authenticated. Run before any destructive operation.' },
+          { cmd: 'aws sts assume-role --role-arn arn:aws:iam::123456789:role/MyRole --role-session-name mysession', desc: 'Assume an IAM role and get temporary credentials.' },
+          { cmd: 'aws configure set region us-east-1 --profile myprofile', desc: 'Set a specific region for a named profile.' },
         ]
       },
       {
-        name: 'S3',
+        name: 'Bedrock',
         commands: [
-          { cmd: 'aws s3 ls', desc: 'List all S3 buckets in the account.' },
-          { cmd: 'aws s3 ls s3://my-bucket/', desc: 'List contents of a bucket or folder prefix.' },
-          { cmd: 'aws s3 cp myfile.txt s3://my-bucket/', desc: 'Upload a local file to S3.' },
-          { cmd: 'aws s3 cp s3://my-bucket/myfile.txt .', desc: 'Download a file from S3 to current directory.' },
-          { cmd: 'aws s3 sync ./local-folder s3://my-bucket/', desc: 'Upload only new or changed files. Perfect for deploys and backups.' },
-          { cmd: 'aws s3 rm s3://my-bucket/file.txt', desc: 'Delete a specific object from S3.' },
-          { cmd: 'aws s3 rm s3://my-bucket/ --recursive', desc: 'Delete all objects under a prefix. Irreversible.' },
-          { cmd: 'aws s3 presign s3://my-bucket/file.txt --expires-in 3600', desc: 'Generate a temporary pre-signed URL valid for 1 hour.' },
+          { cmd: 'aws bedrock list-foundation-models', desc: 'List all available foundation models and their provider, capabilities, and access status.' },
+          { cmd: 'aws bedrock get-foundation-model --model-identifier anthropic.claude-3-5-sonnet-20241022-v2:0', desc: 'Get details for a specific foundation model.' },
+          { cmd: 'aws bedrock-runtime invoke-model --model-id anthropic.claude-3-5-sonnet-20241022-v2:0 --body \'{"anthropic_version":"bedrock-2023-05-31","max_tokens":1024,"messages":[{"role":"user","content":"Hello"}]}\' output.json', desc: 'Invoke Claude via Bedrock and save the response.' },
+          { cmd: 'aws bedrock-runtime invoke-model --model-id amazon.titan-text-express-v1 --body \'{"inputText":"Summarize this","textGenerationConfig":{"maxTokenCount":512}}\' output.json', desc: 'Invoke Amazon Titan text model.' },
+          { cmd: 'aws bedrock list-model-customization-jobs', desc: 'List all fine-tuning jobs for custom models.' },
+          { cmd: 'aws bedrock list-custom-models', desc: 'List all custom fine-tuned models in your account.' },
+          { cmd: 'aws bedrock get-model-customization-job --job-identifier job-id', desc: 'Check the status of a model fine-tuning job.' },
+          { cmd: 'aws bedrock list-knowledge-bases', desc: 'List all Knowledge Bases for Amazon Bedrock (RAG).' },
+          { cmd: 'aws bedrock-agent-runtime retrieve-and-generate --input \'{"text":"What is our refund policy?"}\' --retrieve-and-generate-configuration \'{"type":"KNOWLEDGE_BASE","knowledgeBaseConfiguration":{"knowledgeBaseId":"kb-id","modelArn":"arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"}}\'', desc: 'Query a Bedrock Knowledge Base and generate an answer (RAG).' },
+          { cmd: 'aws bedrock-agent list-agents', desc: 'List all Bedrock Agents in your account.' },
+          { cmd: 'aws bedrock-agent get-agent --agent-id agent-id', desc: 'Get details of a specific Bedrock Agent including its instructions and tools.' },
+        ]
+      },
+      {
+        name: 'CloudFormation',
+        commands: [
+          { cmd: 'aws cloudformation deploy --template-file template.yaml --stack-name my-stack', desc: 'Deploy a stack from a local template. Creates or updates.' },
+          { cmd: 'aws cloudformation deploy --template-file template.yaml --stack-name my-stack --parameter-overrides Env=prod', desc: 'Deploy with parameter overrides.' },
+          { cmd: 'aws cloudformation deploy --template-file template.yaml --stack-name my-stack --capabilities CAPABILITY_IAM', desc: 'Deploy a stack that creates IAM roles. Requires explicit capability.' },
+          { cmd: 'aws cloudformation describe-stacks --stack-name my-stack', desc: 'Show stack status, outputs, and parameters.' },
+          { cmd: 'aws cloudformation describe-stack-events --stack-name my-stack', desc: 'Show detailed event log — essential for debugging failed deployments.' },
+          { cmd: 'aws cloudformation describe-stack-resources --stack-name my-stack', desc: 'List all resources created by a stack with their physical IDs.' },
+          { cmd: 'aws cloudformation get-template --stack-name my-stack', desc: 'Download the template currently deployed for a stack.' },
+          { cmd: 'aws cloudformation validate-template --template-body file://template.yaml', desc: 'Validate template syntax before deploying.' },
+          { cmd: 'aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE', desc: 'List active stacks filtered by status.' },
+          { cmd: 'aws cloudformation delete-stack --stack-name my-stack', desc: 'Delete a stack and all resources it provisioned.' },
+          { cmd: 'aws cloudformation list-change-sets --stack-name my-stack', desc: 'List pending change sets for a stack.' },
+          { cmd: 'aws cloudformation create-change-set --stack-name my-stack --template-body file://template.yaml --change-set-name my-changes', desc: 'Preview what will change before applying an update.' },
+        ]
+      },
+      {
+        name: 'CloudFront',
+        commands: [
+          { cmd: 'aws cloudfront list-distributions', desc: 'List all CloudFront distributions with domain names and status.' },
+          { cmd: 'aws cloudfront get-distribution --id EDFDVBD6EXAMPLE', desc: 'Get full configuration for a specific distribution.' },
+          { cmd: 'aws cloudfront create-invalidation --distribution-id EDFDVBD6EXAMPLE --paths "/*"', desc: 'Invalidate all cached files — forces CloudFront to fetch fresh content.' },
+          { cmd: 'aws cloudfront create-invalidation --distribution-id EDFDVBD6EXAMPLE --paths "/index.html" "/app.js"', desc: 'Invalidate specific files in the CloudFront cache.' },
+          { cmd: 'aws cloudfront get-invalidation --distribution-id EDFDVBD6EXAMPLE --id I1234567', desc: 'Check the status of an invalidation request.' },
+          { cmd: 'aws cloudfront list-invalidations --distribution-id EDFDVBD6EXAMPLE', desc: 'List all invalidations for a distribution.' },
+          { cmd: 'aws cloudfront update-distribution --id EDFDVBD6EXAMPLE --distribution-config file://config.json --if-match ETAG', desc: 'Update distribution settings from a config file.' },
+        ]
+      },
+      {
+        name: 'CloudWatch',
+        commands: [
+          { cmd: 'aws logs describe-log-groups', desc: 'List all CloudWatch Log Groups.' },
+          { cmd: 'aws logs describe-log-groups --log-group-name-prefix /aws/lambda', desc: 'List log groups matching a prefix.' },
+          { cmd: 'aws logs tail /aws/lambda/my-fn --follow', desc: 'Stream live logs from any log group. Ctrl+C to stop.' },
+          { cmd: 'aws logs tail /aws/lambda/my-fn --since 1h', desc: 'Show logs from the last 1 hour.' },
+          { cmd: 'aws logs filter-log-events --log-group-name /aws/lambda/my-fn --filter-pattern "ERROR"', desc: 'Search for a specific pattern across log streams.' },
+          { cmd: 'aws logs get-log-events --log-group-name /aws/lambda/my-fn --log-stream-name my-stream', desc: 'Retrieve events from a specific log stream.' },
+          { cmd: 'aws logs create-log-group --log-group-name /myapp/production', desc: 'Create a new log group.' },
+          { cmd: 'aws logs put-retention-policy --log-group-name /myapp/production --retention-in-days 30', desc: 'Set log retention to 30 days to control storage costs.' },
+          { cmd: 'aws cloudwatch describe-alarms', desc: 'List all CloudWatch alarms and their state.' },
+          { cmd: 'aws cloudwatch describe-alarms --state-value ALARM', desc: 'List only currently firing alarms — fast account health check.' },
+          { cmd: 'aws cloudwatch get-metric-statistics --namespace AWS/EC2 --metric-name CPUUtilization --dimensions Name=InstanceId,Value=i-0abc1234 --start-time 2024-01-01T00:00:00Z --end-time 2024-01-01T01:00:00Z --period 300 --statistics Average', desc: 'Get EC2 CPU utilization stats for a time range.' },
+          { cmd: 'aws cloudwatch list-metrics --namespace AWS/Lambda', desc: 'List available metrics for a namespace.' },
+          { cmd: 'aws cloudwatch put-metric-alarm --alarm-name high-cpu --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold --evaluation-periods 2 --alarm-actions arn:aws:sns:...', desc: 'Create an alarm that fires when EC2 CPU exceeds 80% for 10 minutes.' },
+        ]
+      },
+      {
+        name: 'CodePipeline & CodeBuild',
+        commands: [
+          { cmd: 'aws codepipeline list-pipelines', desc: 'List all CodePipeline pipelines.' },
+          { cmd: 'aws codepipeline get-pipeline-state --name my-pipeline', desc: 'Show the current state of each stage in a pipeline.' },
+          { cmd: 'aws codepipeline start-pipeline-execution --name my-pipeline', desc: 'Manually trigger a pipeline run.' },
+          { cmd: 'aws codepipeline stop-pipeline-execution --pipeline-name my-pipeline --pipeline-execution-id exec-id --abandon', desc: 'Stop a running pipeline execution.' },
+          { cmd: 'aws codepipeline list-pipeline-executions --pipeline-name my-pipeline', desc: 'List recent pipeline executions and their status.' },
+          { cmd: 'aws codebuild list-projects', desc: 'List all CodeBuild projects.' },
+          { cmd: 'aws codebuild start-build --project-name my-build', desc: 'Trigger a manual build of a CodeBuild project.' },
+          { cmd: 'aws codebuild batch-get-builds --ids build-id-1', desc: 'Get the status, logs, and result of specific builds.' },
+          { cmd: 'aws codebuild list-builds-for-project --project-name my-build', desc: 'List recent build IDs for a project.' },
+          { cmd: 'aws codedeploy list-applications', desc: 'List all CodeDeploy applications.' },
+          { cmd: 'aws codedeploy list-deployments --application-name my-app --deployment-group-name my-group', desc: 'List recent deployments for a deployment group.' },
+          { cmd: 'aws codedeploy get-deployment --deployment-id d-ABCDEF', desc: 'Check the status and details of a CodeDeploy deployment.' },
+        ]
+      },
+      {
+        name: 'DynamoDB',
+        commands: [
+          { cmd: 'aws dynamodb list-tables', desc: 'List all DynamoDB tables in the region.' },
+          { cmd: 'aws dynamodb describe-table --table-name my-table', desc: 'Show table schema, key structure, indexes, and throughput settings.' },
+          { cmd: 'aws dynamodb scan --table-name my-table', desc: 'Return all items in a table. Avoid on large tables — use query instead.' },
+          { cmd: 'aws dynamodb query --table-name my-table --key-condition-expression "pk = :v" --expression-attribute-values \'{":v":{"S":"user123"}}\'', desc: 'Query items by partition key. Much more efficient than scan.' },
+          { cmd: 'aws dynamodb get-item --table-name my-table --key \'{"pk":{"S":"user123"},"sk":{"S":"profile"}}\'', desc: 'Fetch a single item by its full primary key.' },
+          { cmd: 'aws dynamodb put-item --table-name my-table --item \'{"pk":{"S":"user123"},"sk":{"S":"profile"},"name":{"S":"Alice"}}\'', desc: 'Insert or replace an item. Overwrites if the key already exists.' },
+          { cmd: 'aws dynamodb update-item --table-name my-table --key \'{"pk":{"S":"user123"},"sk":{"S":"profile"}}\' --update-expression "SET #n = :v" --expression-attribute-names \'{"#n":"name"}\' --expression-attribute-values \'{":v":{"S":"Bob"}}\'', desc: 'Update a specific attribute on an existing item.' },
+          { cmd: 'aws dynamodb delete-item --table-name my-table --key \'{"pk":{"S":"user123"},"sk":{"S":"profile"}}\'', desc: 'Delete a single item by primary key.' },
+          { cmd: 'aws dynamodb create-table --table-name my-table --attribute-definitions AttributeName=pk,AttributeType=S --key-schema AttributeName=pk,KeyType=HASH --billing-mode PAY_PER_REQUEST', desc: 'Create a new DynamoDB table with on-demand billing.' },
+          { cmd: 'aws dynamodb delete-table --table-name my-table', desc: 'Delete a DynamoDB table and all its data. Irreversible.' },
         ]
       },
       {
@@ -711,10 +796,53 @@ const TOOLS = [
         commands: [
           { cmd: 'aws ec2 describe-instances', desc: 'List all EC2 instances with IDs, states, types, and IPs.' },
           { cmd: 'aws ec2 describe-instances --filters Name=instance-state-name,Values=running', desc: 'Filter to only running instances.' },
+          { cmd: 'aws ec2 describe-instances --filters Name=tag:Name,Values=my-server', desc: 'Find instances by Name tag.' },
           { cmd: 'aws ec2 start-instances --instance-ids i-0abc1234', desc: 'Start a stopped EC2 instance.' },
           { cmd: 'aws ec2 stop-instances --instance-ids i-0abc1234', desc: 'Stop a running EC2 instance. Billing stops when fully stopped.' },
+          { cmd: 'aws ec2 reboot-instances --instance-ids i-0abc1234', desc: 'Reboot an EC2 instance without terminating it.' },
           { cmd: 'aws ec2 terminate-instances --instance-ids i-0abc1234', desc: 'Permanently delete an EC2 instance. Cannot be undone.' },
-          { cmd: 'aws ec2 describe-security-groups', desc: 'List all security groups and firewall rules.' },
+          { cmd: 'aws ec2 describe-instance-status --instance-ids i-0abc1234', desc: 'Check system and instance status checks.' },
+          { cmd: 'aws ec2 describe-security-groups', desc: 'List all security groups and their inbound/outbound rules.' },
+          { cmd: 'aws ec2 authorize-security-group-ingress --group-id sg-123 --protocol tcp --port 443 --cidr 0.0.0.0/0', desc: 'Add an inbound rule to a security group to allow HTTPS.' },
+          { cmd: 'aws ec2 describe-key-pairs', desc: 'List all EC2 key pairs in the region.' },
+          { cmd: 'aws ec2 create-key-pair --key-name my-key --query KeyMaterial --output text > my-key.pem', desc: 'Create a key pair and save the private key locally.' },
+          { cmd: 'aws ec2 describe-images --owners amazon --filters Name=name,Values=amzn2-ami-hvm-*', desc: 'Find the latest Amazon Linux AMI ID.' },
+          { cmd: 'aws ec2 describe-volumes', desc: 'List all EBS volumes and their attachment status.' },
+          { cmd: 'aws ec2 create-snapshot --volume-id vol-0abc1234 --description "my backup"', desc: 'Create a snapshot of an EBS volume.' },
+        ]
+      },
+      {
+        name: 'ECR',
+        commands: [
+          { cmd: 'aws ecr describe-repositories', desc: 'List all ECR repositories in the region.' },
+          { cmd: 'aws ecr create-repository --repository-name my-app', desc: 'Create a new private container repository.' },
+          { cmd: 'aws ecr delete-repository --repository-name my-app --force', desc: 'Delete a repository and all its images.' },
+          { cmd: 'aws ecr get-login-password | docker login --username AWS --password-stdin 123456789.dkr.ecr.us-east-1.amazonaws.com', desc: 'Authenticate Docker to your ECR registry. Required before push/pull.' },
+          { cmd: 'aws ecr list-images --repository-name my-app', desc: 'List all images and tags in a repository.' },
+          { cmd: 'aws ecr describe-images --repository-name my-app', desc: 'List images with digest, size, and push date.' },
+          { cmd: 'docker tag my-app:latest 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:latest', desc: 'Tag a local image with the ECR repository URI before pushing.' },
+          { cmd: 'docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:latest', desc: 'Push a tagged image to ECR.' },
+          { cmd: 'docker pull 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:latest', desc: 'Pull an image from ECR.' },
+          { cmd: 'aws ecr batch-delete-image --repository-name my-app --image-ids imageTag=old-tag', desc: 'Delete a specific image by tag.' },
+          { cmd: 'aws ecr put-lifecycle-policy --repository-name my-app --lifecycle-policy-text file://policy.json', desc: 'Apply a lifecycle policy to auto-expire old images.' },
+        ]
+      },
+      {
+        name: 'ECS',
+        commands: [
+          { cmd: 'aws ecs list-clusters', desc: 'List all ECS clusters in the region.' },
+          { cmd: 'aws ecs describe-clusters --clusters my-cluster', desc: 'Show cluster details including running task and service counts.' },
+          { cmd: 'aws ecs list-services --cluster my-cluster', desc: 'List all services running in a cluster.' },
+          { cmd: 'aws ecs describe-services --cluster my-cluster --services my-service', desc: 'Show service details — desired count, running count, task definition, and events.' },
+          { cmd: 'aws ecs list-tasks --cluster my-cluster --service-name my-service', desc: 'List running task ARNs for a service.' },
+          { cmd: 'aws ecs describe-tasks --cluster my-cluster --tasks task-arn', desc: 'Get details for a running task including container status and IPs.' },
+          { cmd: 'aws ecs update-service --cluster my-cluster --service my-service --desired-count 3', desc: 'Scale a service to a specific number of running tasks.' },
+          { cmd: 'aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment', desc: 'Force a new deployment, pulling the latest task definition and image.' },
+          { cmd: 'aws ecs register-task-definition --cli-input-json file://task-def.json', desc: 'Register a new task definition revision from a JSON file.' },
+          { cmd: 'aws ecs list-task-definitions --family-prefix my-task', desc: 'List all revisions of a task definition family.' },
+          { cmd: 'aws ecs run-task --cluster my-cluster --task-definition my-task --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[subnet-abc],securityGroups=[sg-abc],assignPublicIp=ENABLED}"', desc: 'Run a one-off Fargate task.' },
+          { cmd: 'aws ecs stop-task --cluster my-cluster --task task-arn', desc: 'Stop a specific running task.' },
+          { cmd: 'aws ecs execute-command --cluster my-cluster --task task-arn --container my-container --interactive --command "/bin/sh"', desc: 'Open a shell inside a running Fargate container (ECS Exec).' },
         ]
       },
       {
@@ -722,41 +850,164 @@ const TOOLS = [
         commands: [
           { cmd: 'aws iam list-users', desc: 'List all IAM users in the account.' },
           { cmd: 'aws iam list-roles', desc: 'List all IAM roles used by services like Lambda and EC2.' },
+          { cmd: 'aws iam list-groups', desc: 'List all IAM groups.' },
           { cmd: 'aws iam create-user --user-name newuser', desc: 'Create a new IAM user.' },
+          { cmd: 'aws iam delete-user --user-name olduser', desc: 'Delete an IAM user. Must detach policies and delete keys first.' },
           { cmd: 'aws iam create-access-key --user-name myuser', desc: 'Generate Access Key + Secret. Secret shown only once — save immediately.' },
-          { cmd: 'aws iam attach-user-policy --user-name myuser --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess', desc: 'Attach a managed policy to a user.' },
+          { cmd: 'aws iam list-access-keys --user-name myuser', desc: 'List access keys for a user and see their last-used date.' },
+          { cmd: 'aws iam delete-access-key --user-name myuser --access-key-id AKIA...', desc: 'Delete an access key.' },
+          { cmd: 'aws iam attach-user-policy --user-name myuser --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess', desc: 'Attach an AWS managed policy to a user.' },
+          { cmd: 'aws iam detach-user-policy --user-name myuser --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess', desc: 'Detach a policy from a user.' },
           { cmd: 'aws iam list-attached-user-policies --user-name myuser', desc: 'Audit all policies attached to an IAM user.' },
+          { cmd: 'aws iam create-role --role-name MyRole --assume-role-policy-document file://trust.json', desc: 'Create an IAM role with a trust policy document.' },
+          { cmd: 'aws iam attach-role-policy --role-name MyRole --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess', desc: 'Attach a policy to a role.' },
+          { cmd: 'aws iam list-policies --scope Local', desc: 'List all customer-managed policies in the account.' },
+          { cmd: 'aws iam get-account-password-policy', desc: 'Show the account-level password policy for IAM users.' },
         ]
       },
       {
         name: 'Lambda',
         commands: [
           { cmd: 'aws lambda list-functions', desc: 'List all Lambda functions in the region.' },
-          { cmd: 'aws lambda invoke --function-name my-fn output.json', desc: 'Invoke a function and save response to output.json.' },
-          { cmd: 'aws lambda update-function-code --function-name my-fn --zip-file fileb://fn.zip', desc: 'Deploy new code by uploading a zip. Most common redeploy method.' },
           { cmd: 'aws lambda get-function --function-name my-fn', desc: 'Show runtime, memory, timeout, and environment variables.' },
+          { cmd: 'aws lambda invoke --function-name my-fn output.json', desc: 'Invoke a function synchronously and save response to output.json.' },
+          { cmd: 'aws lambda invoke --function-name my-fn --payload \'{"key":"value"}\' output.json', desc: 'Invoke a function with a JSON payload.' },
+          { cmd: 'aws lambda update-function-code --function-name my-fn --zip-file fileb://fn.zip', desc: 'Deploy new code by uploading a zip. Most common redeploy method.' },
+          { cmd: 'aws lambda update-function-code --function-name my-fn --s3-bucket my-bucket --s3-key fn.zip', desc: 'Deploy new code from an S3 object.' },
+          { cmd: 'aws lambda update-function-configuration --function-name my-fn --memory-size 512 --timeout 30', desc: 'Update memory and timeout settings.' },
+          { cmd: 'aws lambda put-function-concurrency --function-name my-fn --reserved-concurrent-executions 100', desc: 'Set reserved concurrency to limit or guarantee execution capacity.' },
+          { cmd: 'aws lambda list-event-source-mappings --function-name my-fn', desc: 'Show triggers attached to a function (SQS, DynamoDB streams, etc.).' },
+          { cmd: 'aws lambda publish-version --function-name my-fn', desc: 'Publish a new immutable version of the function.' },
+          { cmd: 'aws lambda create-alias --function-name my-fn --name prod --function-version 5', desc: 'Create an alias pointing to a specific version (e.g. prod → v5).' },
           { cmd: 'aws logs tail /aws/lambda/my-fn --follow', desc: 'Stream live CloudWatch logs. Ctrl+C to stop.' },
         ]
       },
       {
-        name: 'CloudFormation',
+        name: 'RDS',
         commands: [
-          { cmd: 'aws cloudformation deploy --template-file template.yaml --stack-name my-stack', desc: 'Deploy a stack from a local template. Creates or updates.' },
-          { cmd: 'aws cloudformation describe-stacks --stack-name my-stack', desc: 'Show stack outputs — API URLs, ARNs, bucket names, etc.' },
-          { cmd: 'aws cloudformation delete-stack --stack-name my-stack', desc: 'Delete a stack and all resources it provisioned.' },
-          { cmd: 'aws cloudformation validate-template --template-body file://template.yaml', desc: 'Validate template syntax before deploying.' },
-          { cmd: 'aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE', desc: 'List active stacks. Filter by status.' },
+          { cmd: 'aws rds describe-db-instances', desc: 'List all RDS database instances and their status, endpoints, and engine.' },
+          { cmd: 'aws rds describe-db-instances --db-instance-identifier my-db', desc: 'Get connection details and status for a specific DB instance.' },
+          { cmd: 'aws rds start-db-instance --db-instance-identifier my-db', desc: 'Start a stopped RDS instance.' },
+          { cmd: 'aws rds stop-db-instance --db-instance-identifier my-db', desc: 'Stop an RDS instance to save costs. Data is preserved.' },
+          { cmd: 'aws rds reboot-db-instance --db-instance-identifier my-db', desc: 'Reboot an RDS instance to apply pending parameter changes.' },
+          { cmd: 'aws rds create-db-snapshot --db-instance-identifier my-db --db-snapshot-identifier my-snap', desc: 'Create a manual snapshot of an RDS instance.' },
+          { cmd: 'aws rds describe-db-snapshots --db-instance-identifier my-db', desc: 'List all snapshots for a specific RDS instance.' },
+          { cmd: 'aws rds restore-db-instance-from-db-snapshot --db-instance-identifier new-db --db-snapshot-identifier my-snap', desc: 'Restore a new RDS instance from a snapshot.' },
+          { cmd: 'aws rds modify-db-instance --db-instance-identifier my-db --master-user-password newpassword --apply-immediately', desc: 'Reset the master password for an RDS instance.' },
+          { cmd: 'aws rds describe-db-log-files --db-instance-identifier my-db', desc: 'List available log files for download.' },
+          { cmd: 'aws rds delete-db-instance --db-instance-identifier my-db --skip-final-snapshot', desc: 'Delete an RDS instance without taking a final snapshot. Irreversible.' },
         ]
       },
       {
-        name: 'CloudWatch',
+        name: 'Route 53',
         commands: [
-          { cmd: 'aws logs describe-log-groups', desc: 'List all CloudWatch Log Groups.' },
-          { cmd: 'aws logs tail /aws/lambda/my-fn --follow', desc: 'Stream live logs from any log group.' },
-          { cmd: 'aws cloudwatch describe-alarms --state-value ALARM', desc: 'List all firing alarms — fast account health check.' },
-          { cmd: 'aws cloudwatch list-metrics --namespace AWS/Lambda', desc: 'List metrics for a namespace. Swap for AWS/EC2, AWS/RDS, etc.' },
+          { cmd: 'aws route53 list-hosted-zones', desc: 'List all hosted zones (domains) in Route 53.' },
+          { cmd: 'aws route53 list-resource-record-sets --hosted-zone-id Z1234567890', desc: 'List all DNS records in a hosted zone.' },
+          { cmd: 'aws route53 change-resource-record-sets --hosted-zone-id Z1234567890 --change-batch file://record.json', desc: 'Create, update, or delete DNS records using a JSON change batch.' },
+          { cmd: 'aws route53 get-hosted-zone --id Z1234567890', desc: 'Get details and name servers for a hosted zone.' },
+          { cmd: 'aws route53 list-health-checks', desc: 'List all Route 53 health checks.' },
+          { cmd: 'aws route53 create-hosted-zone --name example.com --caller-reference unique-ref-123', desc: 'Create a new public hosted zone for a domain.' },
+          { cmd: 'aws route53 check-dns-availability --domain-name my-domain.com', desc: 'Check if a domain name is available for registration.' },
         ]
       },
+      {
+        name: 'S3',
+        commands: [
+          { cmd: 'aws s3 ls', desc: 'List all S3 buckets in the account.' },
+          { cmd: 'aws s3 ls s3://my-bucket/', desc: 'List contents of a bucket or folder prefix.' },
+          { cmd: 'aws s3 ls s3://my-bucket/ --recursive --human-readable', desc: 'List all objects recursively with human-readable sizes.' },
+          { cmd: 'aws s3 cp myfile.txt s3://my-bucket/', desc: 'Upload a local file to S3.' },
+          { cmd: 'aws s3 cp s3://my-bucket/myfile.txt .', desc: 'Download a file from S3 to the current directory.' },
+          { cmd: 'aws s3 cp s3://my-bucket/ ./local/ --recursive', desc: 'Download an entire bucket or prefix to local directory.' },
+          { cmd: 'aws s3 sync ./local-folder s3://my-bucket/', desc: 'Upload only new or changed files. Perfect for deploys and backups.' },
+          { cmd: 'aws s3 sync s3://my-bucket/ ./local-folder', desc: 'Sync a bucket down to a local folder.' },
+          { cmd: 'aws s3 rm s3://my-bucket/file.txt', desc: 'Delete a specific object from S3.' },
+          { cmd: 'aws s3 rm s3://my-bucket/ --recursive', desc: 'Delete all objects under a prefix. Irreversible.' },
+          { cmd: 'aws s3 presign s3://my-bucket/file.txt --expires-in 3600', desc: 'Generate a temporary pre-signed URL valid for 1 hour.' },
+          { cmd: 'aws s3 mb s3://my-new-bucket', desc: 'Create a new S3 bucket.' },
+          { cmd: 'aws s3 rb s3://my-bucket --force', desc: 'Remove a bucket and all its contents.' },
+          { cmd: 'aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled', desc: 'Enable versioning on a bucket.' },
+          { cmd: 'aws s3api get-bucket-policy --bucket my-bucket', desc: 'Retrieve the bucket policy as JSON.' },
+        ]
+      },
+      {
+        name: 'Secrets Manager',
+        commands: [
+          { cmd: 'aws secretsmanager list-secrets', desc: 'List all secrets stored in Secrets Manager.' },
+          { cmd: 'aws secretsmanager get-secret-value --secret-id my-secret', desc: 'Retrieve the current value of a secret.' },
+          { cmd: 'aws secretsmanager get-secret-value --secret-id my-secret --query SecretString --output text', desc: 'Retrieve just the secret string value, stripped of JSON wrapper.' },
+          { cmd: 'aws secretsmanager create-secret --name my-secret --secret-string "my-password"', desc: 'Create a new secret with a plaintext value.' },
+          { cmd: 'aws secretsmanager create-secret --name my-secret --secret-string \'{"username":"admin","password":"mypass"}\'', desc: 'Create a secret storing JSON key-value pairs (recommended for DB creds).' },
+          { cmd: 'aws secretsmanager update-secret --secret-id my-secret --secret-string "new-password"', desc: 'Update the value of an existing secret.' },
+          { cmd: 'aws secretsmanager rotate-secret --secret-id my-secret', desc: 'Trigger an immediate rotation of a secret.' },
+          { cmd: 'aws secretsmanager describe-secret --secret-id my-secret', desc: 'Show metadata — rotation config, last accessed, tags.' },
+          { cmd: 'aws secretsmanager delete-secret --secret-id my-secret --recovery-window-in-days 7', desc: 'Schedule a secret for deletion with a 7-day recovery window.' },
+          { cmd: 'aws secretsmanager delete-secret --secret-id my-secret --force-delete-without-recovery', desc: 'Immediately and permanently delete a secret. Cannot be undone.' },
+        ]
+      },
+      {
+        name: 'SNS',
+        commands: [
+          { cmd: 'aws sns list-topics', desc: 'List all SNS topics in the region.' },
+          { cmd: 'aws sns create-topic --name my-topic', desc: 'Create a new SNS topic. Returns the topic ARN.' },
+          { cmd: 'aws sns delete-topic --topic-arn arn:aws:sns:us-east-1:123:my-topic', desc: 'Delete an SNS topic and all its subscriptions.' },
+          { cmd: 'aws sns publish --topic-arn arn:aws:sns:us-east-1:123:my-topic --message "Hello World"', desc: 'Publish a message to a topic. Delivers to all subscribers.' },
+          { cmd: 'aws sns publish --topic-arn arn:aws:sns:us-east-1:123:my-topic --message "Alert" --subject "Production Alert"', desc: 'Publish with a subject line (used in email subscriptions).' },
+          { cmd: 'aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:123:my-topic', desc: 'List all subscribers for a topic.' },
+          { cmd: 'aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123:my-topic --protocol email --notification-endpoint me@example.com', desc: 'Subscribe an email address to a topic.' },
+          { cmd: 'aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123:my-topic --protocol sqs --notification-endpoint arn:aws:sqs:us-east-1:123:my-queue', desc: 'Subscribe an SQS queue to an SNS topic.' },
+          { cmd: 'aws sns unsubscribe --subscription-arn arn:aws:sns:us-east-1:123:my-topic:sub-id', desc: 'Remove a subscription from a topic.' },
+        ]
+      },
+      {
+        name: 'SQS',
+        commands: [
+          { cmd: 'aws sqs list-queues', desc: 'List all SQS queue URLs in the region.' },
+          { cmd: 'aws sqs create-queue --queue-name my-queue', desc: 'Create a standard SQS queue.' },
+          { cmd: 'aws sqs create-queue --queue-name my-queue.fifo --attributes FifoQueue=true,ContentBasedDeduplication=true', desc: 'Create a FIFO queue with deduplication enabled.' },
+          { cmd: 'aws sqs get-queue-attributes --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue --attribute-names All', desc: 'Get all queue attributes including message count and delay settings.' },
+          { cmd: 'aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue --message-body "Hello"', desc: 'Send a message to an SQS queue.' },
+          { cmd: 'aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue --max-number-of-messages 10', desc: 'Receive up to 10 messages from a queue.' },
+          { cmd: 'aws sqs delete-message --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue --receipt-handle "handle..."', desc: 'Delete a message after processing it (using its receipt handle).' },
+          { cmd: 'aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue', desc: 'Delete all messages in a queue instantly.' },
+          { cmd: 'aws sqs delete-queue --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue', desc: 'Delete the queue and all its messages permanently.' },
+          { cmd: 'aws sqs set-queue-attributes --queue-url https://sqs.us-east-1.amazonaws.com/123/my-queue --attributes VisibilityTimeout=60', desc: 'Change visibility timeout or other queue attributes.' },
+        ]
+      },
+      {
+        name: 'SSM',
+        commands: [
+          { cmd: 'aws ssm get-parameter --name /myapp/db/password --with-decryption', desc: 'Retrieve a Parameter Store value, decrypting SecureString types.' },
+          { cmd: 'aws ssm get-parameters-by-path --path /myapp/ --recursive --with-decryption', desc: 'Retrieve all parameters under a path hierarchy.' },
+          { cmd: 'aws ssm put-parameter --name /myapp/db/password --value "mypass" --type SecureString', desc: 'Create or update an encrypted SecureString parameter.' },
+          { cmd: 'aws ssm put-parameter --name /myapp/config/env --value "production" --type String --overwrite', desc: 'Create or overwrite a plain String parameter.' },
+          { cmd: 'aws ssm delete-parameter --name /myapp/db/password', desc: 'Delete a parameter from Parameter Store.' },
+          { cmd: 'aws ssm describe-parameters', desc: 'List all parameters with metadata (no values).' },
+          { cmd: 'aws ssm start-session --target i-0abc1234', desc: 'Open a secure shell session to an EC2 instance without SSH or a bastion host.' },
+          { cmd: 'aws ssm send-command --instance-ids i-0abc1234 --document-name AWS-RunShellScript --parameters commands="uptime"', desc: 'Run a shell command on an EC2 instance remotely via SSM.' },
+          { cmd: 'aws ssm list-command-invocations --command-id cmd-id --details', desc: 'Check the output and status of a previously sent SSM command.' },
+          { cmd: 'aws ssm describe-instance-information', desc: 'List all EC2 instances registered with SSM (SSM Agent installed).' },
+        ]
+      },
+      {
+        name: 'VPC & Networking',
+        commands: [
+          { cmd: 'aws ec2 describe-vpcs', desc: 'List all VPCs with their CIDR blocks and default status.' },
+          { cmd: 'aws ec2 describe-subnets', desc: 'List all subnets with their VPC, AZ, and available IP count.' },
+          { cmd: 'aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-0abc1234', desc: 'List subnets belonging to a specific VPC.' },
+          { cmd: 'aws ec2 describe-internet-gateways', desc: 'List all internet gateways and their VPC attachments.' },
+          { cmd: 'aws ec2 describe-route-tables', desc: 'List all route tables and their routes.' },
+          { cmd: 'aws ec2 describe-nat-gateways', desc: 'List all NAT gateways and their status.' },
+          { cmd: 'aws ec2 describe-network-interfaces', desc: 'List all ENIs — useful for finding orphaned interfaces.' },
+          { cmd: 'aws ec2 describe-elastic-ips', desc: 'List all Elastic IPs and which instances they are associated with.' },
+          { cmd: 'aws ec2 allocate-address --domain vpc', desc: 'Allocate a new Elastic IP address.' },
+          { cmd: 'aws ec2 associate-address --instance-id i-0abc1234 --allocation-id eipalloc-abc', desc: 'Associate an Elastic IP with an EC2 instance.' },
+          { cmd: 'aws ec2 describe-vpc-peering-connections', desc: 'List all VPC peering connections and their status.' },
+          { cmd: 'aws elbv2 describe-load-balancers', desc: 'List all ALBs and NLBs with their DNS names and states.' },
+          { cmd: 'aws elbv2 describe-target-groups', desc: 'List all target groups and their health check configs.' },
+          { cmd: 'aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:...', desc: 'Check the health status of targets in a target group.' },
+        ]
+      }
     ]
   },
 
@@ -781,6 +1032,24 @@ const TOOLS = [
         ]
       },
       {
+        name: 'Destroy',
+        commands: [
+          { cmd: 'terraform destroy', desc: 'Destroy all resources managed by this configuration. Prompts for confirmation.' },
+          { cmd: 'terraform destroy -auto-approve', desc: 'Destroy without prompting. Use with extreme caution.' },
+          { cmd: 'terraform destroy -target=aws_instance.web', desc: 'Destroy only a specific resource instead of the entire stack.' },
+        ]
+      },
+      {
+        name: 'Output & Import',
+        commands: [
+          { cmd: 'terraform output', desc: 'Print all output values defined in the configuration.' },
+          { cmd: 'terraform output db_endpoint', desc: 'Print a specific output value by name.' },
+          { cmd: 'terraform import aws_instance.web i-0abc1234', desc: 'Import an existing resource into Terraform state without recreating it.' },
+          { cmd: 'terraform console', desc: 'Open an interactive REPL to evaluate expressions against state.' },
+          { cmd: 'terraform graph | dot -Tsvg > graph.svg', desc: 'Generate a visual dependency graph of all resources.' },
+        ]
+      },
+      {
         name: 'Plan & Apply',
         commands: [
           { cmd: 'terraform plan', desc: 'Preview what Terraform will create, change, or destroy. Always run before apply.' },
@@ -789,14 +1058,6 @@ const TOOLS = [
           { cmd: 'terraform apply -auto-approve', desc: 'Apply without interactive confirmation. Use carefully in CI/CD.' },
           { cmd: 'terraform apply tfplan', desc: 'Apply a previously saved plan file. No surprises.' },
           { cmd: 'terraform apply -target=aws_instance.web', desc: 'Apply changes only to a specific resource. Useful for targeted fixes.' },
-        ]
-      },
-      {
-        name: 'Destroy',
-        commands: [
-          { cmd: 'terraform destroy', desc: 'Destroy all resources managed by this configuration. Prompts for confirmation.' },
-          { cmd: 'terraform destroy -auto-approve', desc: 'Destroy without prompting. Use with extreme caution.' },
-          { cmd: 'terraform destroy -target=aws_instance.web', desc: 'Destroy only a specific resource instead of the entire stack.' },
         ]
       },
       {
@@ -818,17 +1079,7 @@ const TOOLS = [
           { cmd: 'terraform workspace show', desc: 'Print the name of the current workspace.' },
           { cmd: 'terraform workspace delete staging', desc: 'Delete a workspace. Must switch away from it first.' },
         ]
-      },
-      {
-        name: 'Output & Import',
-        commands: [
-          { cmd: 'terraform output', desc: 'Print all output values defined in the configuration.' },
-          { cmd: 'terraform output db_endpoint', desc: 'Print a specific output value by name.' },
-          { cmd: 'terraform import aws_instance.web i-0abc1234', desc: 'Import an existing resource into Terraform state without recreating it.' },
-          { cmd: 'terraform console', desc: 'Open an interactive REPL to evaluate expressions against state.' },
-          { cmd: 'terraform graph | dot -Tsvg > graph.svg', desc: 'Generate a visual dependency graph of all resources.' },
-        ]
-      },
+      }
     ]
   },
 
@@ -902,7 +1153,7 @@ const TOOLS = [
           { cmd: 'git revert HEAD', desc: 'Create a new commit that undoes the last commit. Safe for shared branches.' },
           { cmd: 'git clean -fd', desc: 'Remove untracked files and directories.' },
         ]
-      },
+      }
     ]
   },
 
@@ -916,15 +1167,6 @@ const TOOLS = [
     note: 'Install: <code>pip install ansible</code>. Configure your inventory in <code>/etc/ansible/hosts</code> or use <code>-i inventory.ini</code>. Test connectivity with <code>ansible all -m ping</code>.',
     categories: [
       {
-        name: 'Inventory',
-        commands: [
-          { cmd: 'ansible all --list-hosts', desc: 'List all hosts in the default inventory.' },
-          { cmd: 'ansible all --list-hosts -i inventory.ini', desc: 'List hosts from a specific inventory file.' },
-          { cmd: 'ansible-inventory --list', desc: 'Show full inventory in JSON format with variables.' },
-          { cmd: 'ansible-inventory --graph', desc: 'Show inventory as a visual tree of groups and hosts.' },
-        ]
-      },
-      {
         name: 'Ad-hoc Commands',
         commands: [
           { cmd: 'ansible all -m ping', desc: 'Ping all hosts to check SSH connectivity. Great first test.' },
@@ -933,6 +1175,25 @@ const TOOLS = [
           { cmd: 'ansible all -m apt -a "name=nginx state=present" -b', desc: 'Install a package on all hosts (-b = become root).' },
           { cmd: 'ansible all -m service -a "name=nginx state=restarted" -b', desc: 'Restart a service on all hosts.' },
           { cmd: 'ansible all -m setup', desc: 'Gather and display facts about all hosts (OS, IP, memory, etc.).' },
+        ]
+      },
+      {
+        name: 'Galaxy',
+        commands: [
+          { cmd: 'ansible-galaxy install geerlingguy.nginx', desc: 'Install a role from Ansible Galaxy.' },
+          { cmd: 'ansible-galaxy install -r requirements.yml', desc: 'Install all roles listed in a requirements file.' },
+          { cmd: 'ansible-galaxy list', desc: 'List all installed roles.' },
+          { cmd: 'ansible-galaxy init my-role', desc: 'Create a new role with the standard directory structure.' },
+          { cmd: 'ansible-galaxy collection install community.aws', desc: 'Install a collection from Galaxy.' },
+        ]
+      },
+      {
+        name: 'Inventory',
+        commands: [
+          { cmd: 'ansible all --list-hosts', desc: 'List all hosts in the default inventory.' },
+          { cmd: 'ansible all --list-hosts -i inventory.ini', desc: 'List hosts from a specific inventory file.' },
+          { cmd: 'ansible-inventory --list', desc: 'Show full inventory in JSON format with variables.' },
+          { cmd: 'ansible-inventory --graph', desc: 'Show inventory as a visual tree of groups and hosts.' },
         ]
       },
       {
@@ -959,17 +1220,7 @@ const TOOLS = [
           { cmd: 'ansible-vault view secrets.yml', desc: 'View the contents of an encrypted file without decrypting it.' },
           { cmd: 'ansible-playbook site.yml --ask-vault-pass', desc: 'Run a playbook and prompt for vault password.' },
         ]
-      },
-      {
-        name: 'Galaxy',
-        commands: [
-          { cmd: 'ansible-galaxy install geerlingguy.nginx', desc: 'Install a role from Ansible Galaxy.' },
-          { cmd: 'ansible-galaxy install -r requirements.yml', desc: 'Install all roles listed in a requirements file.' },
-          { cmd: 'ansible-galaxy list', desc: 'List all installed roles.' },
-          { cmd: 'ansible-galaxy init my-role', desc: 'Create a new role with the standard directory structure.' },
-          { cmd: 'ansible-galaxy collection install community.aws', desc: 'Install a collection from Galaxy.' },
-        ]
-      },
+      }
     ]
   },
 
@@ -983,16 +1234,18 @@ const TOOLS = [
     note: 'Install Docker Desktop from <code>docker.com</code>. Use <code>docker compose</code> for multi-container apps. Always tag images before pushing to a registry.',
     categories: [
       {
-        name: 'Images',
+        name: 'Compose',
         commands: [
-          { cmd: 'docker images', desc: 'List all local images with tags, sizes, and creation dates.' },
-          { cmd: 'docker pull nginx:latest', desc: 'Download an image from Docker Hub or a registry.' },
-          { cmd: 'docker build -t myapp:latest .', desc: 'Build an image from a Dockerfile in the current directory.' },
-          { cmd: 'docker build -t myapp:latest -f Dockerfile.prod .', desc: 'Build using a specific Dockerfile.' },
-          { cmd: 'docker tag myapp:latest myregistry/myapp:v1.0', desc: 'Tag an image with a new name, typically before pushing.' },
-          { cmd: 'docker push myregistry/myapp:v1.0', desc: 'Push an image to a registry. Login first with docker login.' },
-          { cmd: 'docker rmi myapp:latest', desc: 'Remove a local image. Use -f to force if containers use it.' },
-          { cmd: 'docker image prune -a', desc: 'Remove all unused images to free disk space.' },
+          { cmd: 'docker compose up', desc: 'Start all services defined in docker-compose.yml.' },
+          { cmd: 'docker compose up -d', desc: 'Start all services in detached (background) mode.' },
+          { cmd: 'docker compose up --build', desc: 'Rebuild images before starting services.' },
+          { cmd: 'docker compose down', desc: 'Stop and remove all containers, networks. Preserves volumes.' },
+          { cmd: 'docker compose down -v', desc: 'Stop and remove containers, networks, and volumes.' },
+          { cmd: 'docker compose logs -f', desc: 'Stream live logs from all services.' },
+          { cmd: 'docker compose ps', desc: 'List status of all services in the stack.' },
+          { cmd: 'docker compose exec web bash', desc: 'Open a shell in a running compose service.' },
+          { cmd: 'docker compose pull', desc: 'Pull latest images for all services.' },
+          { cmd: 'docker compose restart web', desc: 'Restart a specific service.' },
         ]
       },
       {
@@ -1013,31 +1266,16 @@ const TOOLS = [
         ]
       },
       {
-        name: 'Volumes & Networks',
+        name: 'Images',
         commands: [
-          { cmd: 'docker volume ls', desc: 'List all Docker volumes.' },
-          { cmd: 'docker volume create mydata', desc: 'Create a named volume for persistent storage.' },
-          { cmd: 'docker run -v mydata:/data myapp', desc: 'Mount a named volume into a container.' },
-          { cmd: 'docker run -v $(pwd):/app myapp', desc: 'Bind-mount the current directory into a container. Useful for dev.' },
-          { cmd: 'docker volume prune', desc: 'Remove all unused volumes.' },
-          { cmd: 'docker network ls', desc: 'List all Docker networks.' },
-          { cmd: 'docker network create mynet', desc: 'Create a custom bridge network.' },
-          { cmd: 'docker network connect mynet webserver', desc: 'Connect a running container to a network.' },
-        ]
-      },
-      {
-        name: 'Compose',
-        commands: [
-          { cmd: 'docker compose up', desc: 'Start all services defined in docker-compose.yml.' },
-          { cmd: 'docker compose up -d', desc: 'Start all services in detached (background) mode.' },
-          { cmd: 'docker compose up --build', desc: 'Rebuild images before starting services.' },
-          { cmd: 'docker compose down', desc: 'Stop and remove all containers, networks. Preserves volumes.' },
-          { cmd: 'docker compose down -v', desc: 'Stop and remove containers, networks, and volumes.' },
-          { cmd: 'docker compose logs -f', desc: 'Stream live logs from all services.' },
-          { cmd: 'docker compose ps', desc: 'List status of all services in the stack.' },
-          { cmd: 'docker compose exec web bash', desc: 'Open a shell in a running compose service.' },
-          { cmd: 'docker compose pull', desc: 'Pull latest images for all services.' },
-          { cmd: 'docker compose restart web', desc: 'Restart a specific service.' },
+          { cmd: 'docker images', desc: 'List all local images with tags, sizes, and creation dates.' },
+          { cmd: 'docker pull nginx:latest', desc: 'Download an image from Docker Hub or a registry.' },
+          { cmd: 'docker build -t myapp:latest .', desc: 'Build an image from a Dockerfile in the current directory.' },
+          { cmd: 'docker build -t myapp:latest -f Dockerfile.prod .', desc: 'Build using a specific Dockerfile.' },
+          { cmd: 'docker tag myapp:latest myregistry/myapp:v1.0', desc: 'Tag an image with a new name, typically before pushing.' },
+          { cmd: 'docker push myregistry/myapp:v1.0', desc: 'Push an image to a registry. Login first with docker login.' },
+          { cmd: 'docker rmi myapp:latest', desc: 'Remove a local image. Use -f to force if containers use it.' },
+          { cmd: 'docker image prune -a', desc: 'Remove all unused images to free disk space.' },
         ]
       },
       {
@@ -1050,6 +1288,19 @@ const TOOLS = [
           { cmd: 'docker info', desc: 'Show Docker engine info — version, OS, resources, and configuration.' },
         ]
       },
+      {
+        name: 'Volumes & Networks',
+        commands: [
+          { cmd: 'docker volume ls', desc: 'List all Docker volumes.' },
+          { cmd: 'docker volume create mydata', desc: 'Create a named volume for persistent storage.' },
+          { cmd: 'docker run -v mydata:/data myapp', desc: 'Mount a named volume into a container.' },
+          { cmd: 'docker run -v $(pwd):/app myapp', desc: 'Bind-mount the current directory into a container. Useful for dev.' },
+          { cmd: 'docker volume prune', desc: 'Remove all unused volumes.' },
+          { cmd: 'docker network ls', desc: 'List all Docker networks.' },
+          { cmd: 'docker network create mynet', desc: 'Create a custom bridge network.' },
+          { cmd: 'docker network connect mynet webserver', desc: 'Connect a running container to a network.' },
+        ]
+      }
     ]
   },
 
@@ -1074,18 +1325,13 @@ const TOOLS = [
         ]
       },
       {
-        name: 'Pods',
+        name: 'ConfigMaps & Secrets',
         commands: [
-          { cmd: 'kubectl get pods', desc: 'List all pods in the current namespace.' },
-          { cmd: 'kubectl get pods -A', desc: 'List pods across all namespaces.' },
-          { cmd: 'kubectl get pods -n myns', desc: 'List pods in a specific namespace.' },
-          { cmd: 'kubectl describe pod my-pod', desc: 'Show detailed info including events and conditions. First step when a pod won\'t start.' },
-          { cmd: 'kubectl logs my-pod', desc: 'Print logs from a pod\'s container.' },
-          { cmd: 'kubectl logs -f my-pod', desc: 'Stream live logs. Ctrl+C to stop.' },
-          { cmd: 'kubectl logs my-pod -c my-container', desc: 'Get logs from a specific container in a multi-container pod.' },
-          { cmd: 'kubectl exec -it my-pod -- bash', desc: 'Open a shell inside a running pod. Great for debugging.' },
-          { cmd: 'kubectl delete pod my-pod', desc: 'Delete a pod. If managed by a deployment, it will be recreated.' },
-          { cmd: 'kubectl run debug --image=busybox -it --rm', desc: 'Spin up a temporary debug pod and drop into a shell.' },
+          { cmd: 'kubectl get configmaps', desc: 'List all ConfigMaps in the namespace.' },
+          { cmd: 'kubectl describe configmap my-config', desc: 'Show the contents of a ConfigMap.' },
+          { cmd: 'kubectl get secrets', desc: 'List all Secrets in the namespace.' },
+          { cmd: 'kubectl create secret generic my-secret --from-literal=password=mypass', desc: 'Create a secret from a literal value.' },
+          { cmd: 'kubectl create secret generic my-secret --from-file=./creds.json', desc: 'Create a secret from a file.' },
         ]
       },
       {
@@ -1103,13 +1349,18 @@ const TOOLS = [
         ]
       },
       {
-        name: 'Services & Networking',
+        name: 'Pods',
         commands: [
-          { cmd: 'kubectl get services', desc: 'List all services and their cluster IPs and ports.' },
-          { cmd: 'kubectl get ingress', desc: 'List all ingress resources and their rules.' },
-          { cmd: 'kubectl port-forward pod/my-pod 8080:80', desc: 'Forward local port 8080 to pod port 80. Great for local testing.' },
-          { cmd: 'kubectl port-forward svc/my-service 8080:80', desc: 'Port-forward to a service instead of a specific pod.' },
-          { cmd: 'kubectl expose deployment my-app --port=80 --type=LoadBalancer', desc: 'Create a service to expose a deployment.' },
+          { cmd: 'kubectl get pods', desc: 'List all pods in the current namespace.' },
+          { cmd: 'kubectl get pods -A', desc: 'List pods across all namespaces.' },
+          { cmd: 'kubectl get pods -n myns', desc: 'List pods in a specific namespace.' },
+          { cmd: 'kubectl describe pod my-pod', desc: 'Show detailed info including events and conditions. First step when a pod won\'t start.' },
+          { cmd: 'kubectl logs my-pod', desc: 'Print logs from a pod\'s container.' },
+          { cmd: 'kubectl logs -f my-pod', desc: 'Stream live logs. Ctrl+C to stop.' },
+          { cmd: 'kubectl logs my-pod -c my-container', desc: 'Get logs from a specific container in a multi-container pod.' },
+          { cmd: 'kubectl exec -it my-pod -- bash', desc: 'Open a shell inside a running pod. Great for debugging.' },
+          { cmd: 'kubectl delete pod my-pod', desc: 'Delete a pod. If managed by a deployment, it will be recreated.' },
+          { cmd: 'kubectl run debug --image=busybox -it --rm', desc: 'Spin up a temporary debug pod and drop into a shell.' },
         ]
       },
       {
@@ -1123,15 +1374,15 @@ const TOOLS = [
         ]
       },
       {
-        name: 'ConfigMaps & Secrets',
+        name: 'Services & Networking',
         commands: [
-          { cmd: 'kubectl get configmaps', desc: 'List all ConfigMaps in the namespace.' },
-          { cmd: 'kubectl describe configmap my-config', desc: 'Show the contents of a ConfigMap.' },
-          { cmd: 'kubectl get secrets', desc: 'List all Secrets in the namespace.' },
-          { cmd: 'kubectl create secret generic my-secret --from-literal=password=mypass', desc: 'Create a secret from a literal value.' },
-          { cmd: 'kubectl create secret generic my-secret --from-file=./creds.json', desc: 'Create a secret from a file.' },
+          { cmd: 'kubectl get services', desc: 'List all services and their cluster IPs and ports.' },
+          { cmd: 'kubectl get ingress', desc: 'List all ingress resources and their rules.' },
+          { cmd: 'kubectl port-forward pod/my-pod 8080:80', desc: 'Forward local port 8080 to pod port 80. Great for local testing.' },
+          { cmd: 'kubectl port-forward svc/my-service 8080:80', desc: 'Port-forward to a service instead of a specific pod.' },
+          { cmd: 'kubectl expose deployment my-app --port=80 --type=LoadBalancer', desc: 'Create a service to expose a deployment.' },
         ]
-      },
+      }
     ]
   },
 
@@ -1145,14 +1396,13 @@ const TOOLS = [
     note: 'Install: <code>brew install helm</code>. Add repos before installing charts. Always use <code>--dry-run</code> to preview changes before applying them to a cluster.',
     categories: [
       {
-        name: 'Repos',
+        name: 'Chart Development',
         commands: [
-          { cmd: 'helm repo add stable https://charts.helm.sh/stable', desc: 'Add a chart repository.' },
-          { cmd: 'helm repo add bitnami https://charts.bitnami.com/bitnami', desc: 'Add the popular Bitnami chart repository.' },
-          { cmd: 'helm repo list', desc: 'List all configured chart repositories.' },
-          { cmd: 'helm repo update', desc: 'Fetch the latest chart info from all configured repos.' },
-          { cmd: 'helm search repo nginx', desc: 'Search all configured repos for charts matching "nginx".' },
-          { cmd: 'helm search hub wordpress', desc: 'Search Artifact Hub (public registry) for charts.' },
+          { cmd: 'helm create my-chart', desc: 'Scaffold a new chart with the standard directory structure.' },
+          { cmd: 'helm lint ./my-chart', desc: 'Check a chart for errors and best-practice issues.' },
+          { cmd: 'helm template my-release ./my-chart', desc: 'Render chart templates locally and print the output YAML.' },
+          { cmd: 'helm template my-release ./my-chart -f values.yaml', desc: 'Render templates with custom values to check output.' },
+          { cmd: 'helm package ./my-chart', desc: 'Package a chart into a versioned .tgz archive.' },
         ]
       },
       {
@@ -1181,22 +1431,23 @@ const TOOLS = [
         ]
       },
       {
+        name: 'Repos',
+        commands: [
+          { cmd: 'helm repo add stable https://charts.helm.sh/stable', desc: 'Add a chart repository.' },
+          { cmd: 'helm repo add bitnami https://charts.bitnami.com/bitnami', desc: 'Add the popular Bitnami chart repository.' },
+          { cmd: 'helm repo list', desc: 'List all configured chart repositories.' },
+          { cmd: 'helm repo update', desc: 'Fetch the latest chart info from all configured repos.' },
+          { cmd: 'helm search repo nginx', desc: 'Search all configured repos for charts matching "nginx".' },
+          { cmd: 'helm search hub wordpress', desc: 'Search Artifact Hub (public registry) for charts.' },
+        ]
+      },
+      {
         name: 'Rollback',
         commands: [
           { cmd: 'helm rollback my-release', desc: 'Roll back a release to the previous revision.' },
           { cmd: 'helm rollback my-release 2', desc: 'Roll back to a specific revision number.' },
         ]
-      },
-      {
-        name: 'Chart Development',
-        commands: [
-          { cmd: 'helm create my-chart', desc: 'Scaffold a new chart with the standard directory structure.' },
-          { cmd: 'helm lint ./my-chart', desc: 'Check a chart for errors and best-practice issues.' },
-          { cmd: 'helm template my-release ./my-chart', desc: 'Render chart templates locally and print the output YAML.' },
-          { cmd: 'helm template my-release ./my-chart -f values.yaml', desc: 'Render templates with custom values to check output.' },
-          { cmd: 'helm package ./my-chart', desc: 'Package a chart into a versioned .tgz archive.' },
-        ]
-      },
+      }
     ]
   },
 
@@ -1209,6 +1460,17 @@ const TOOLS = [
     desc: 'Shell & system commands',
     note: 'Universal Linux/macOS commands. Use <code>man COMMAND</code> for full documentation on any command. Prefix destructive commands with <code>echo</code> to preview before running.',
     categories: [
+      {
+        name: 'Archives & Compression',
+        commands: [
+          { cmd: 'tar -czf archive.tar.gz /path/to/dir/', desc: 'Create a gzip-compressed tar archive.' },
+          { cmd: 'tar -xzf archive.tar.gz', desc: 'Extract a gzip tar archive.' },
+          { cmd: 'tar -xzf archive.tar.gz -C /target/dir/', desc: 'Extract to a specific directory.' },
+          { cmd: 'tar -tzf archive.tar.gz', desc: 'List contents of a tar.gz without extracting.' },
+          { cmd: 'zip -r archive.zip ./folder/', desc: 'Create a zip archive from a directory.' },
+          { cmd: 'unzip archive.zip -d /target/', desc: 'Extract a zip archive to a directory.' },
+        ]
+      },
       {
         name: 'Files & Directories',
         commands: [
@@ -1223,21 +1485,6 @@ const TOOLS = [
           { cmd: 'tail -f /var/log/syslog', desc: 'Stream a log file in real time.' },
           { cmd: 'grep -r "ERROR" /var/log/', desc: 'Recursively search for "ERROR" in all log files.' },
           { cmd: 'grep -n "pattern" file.txt', desc: 'Search for a pattern and show line numbers.' },
-        ]
-      },
-      {
-        name: 'Process Management',
-        commands: [
-          { cmd: 'ps aux | grep nginx', desc: 'Find processes matching "nginx".' },
-          { cmd: 'top', desc: 'Interactive real-time view of CPU and memory usage by process.' },
-          { cmd: 'htop', desc: 'Enhanced top with color, easier navigation, and tree view.' },
-          { cmd: 'kill -9 PID', desc: 'Force-kill a process by PID.' },
-          { cmd: 'pkill nginx', desc: 'Kill all processes matching a name.' },
-          { cmd: 'nohup ./script.sh &', desc: 'Run a command in the background that survives terminal closure.' },
-          { cmd: 'systemctl status nginx', desc: 'Show service status, uptime, and recent logs.' },
-          { cmd: 'systemctl restart nginx', desc: 'Restart a system service.' },
-          { cmd: 'systemctl enable nginx', desc: 'Enable a service to auto-start on boot.' },
-          { cmd: 'journalctl -u nginx -f', desc: 'Stream live systemd service logs.' },
         ]
       },
       {
@@ -1267,14 +1514,18 @@ const TOOLS = [
         ]
       },
       {
-        name: 'Archives & Compression',
+        name: 'Process Management',
         commands: [
-          { cmd: 'tar -czf archive.tar.gz /path/to/dir/', desc: 'Create a gzip-compressed tar archive.' },
-          { cmd: 'tar -xzf archive.tar.gz', desc: 'Extract a gzip tar archive.' },
-          { cmd: 'tar -xzf archive.tar.gz -C /target/dir/', desc: 'Extract to a specific directory.' },
-          { cmd: 'tar -tzf archive.tar.gz', desc: 'List contents of a tar.gz without extracting.' },
-          { cmd: 'zip -r archive.zip ./folder/', desc: 'Create a zip archive from a directory.' },
-          { cmd: 'unzip archive.zip -d /target/', desc: 'Extract a zip archive to a directory.' },
+          { cmd: 'ps aux | grep nginx', desc: 'Find processes matching "nginx".' },
+          { cmd: 'top', desc: 'Interactive real-time view of CPU and memory usage by process.' },
+          { cmd: 'htop', desc: 'Enhanced top with color, easier navigation, and tree view.' },
+          { cmd: 'kill -9 PID', desc: 'Force-kill a process by PID.' },
+          { cmd: 'pkill nginx', desc: 'Kill all processes matching a name.' },
+          { cmd: 'nohup ./script.sh &', desc: 'Run a command in the background that survives terminal closure.' },
+          { cmd: 'systemctl status nginx', desc: 'Show service status, uptime, and recent logs.' },
+          { cmd: 'systemctl restart nginx', desc: 'Restart a system service.' },
+          { cmd: 'systemctl enable nginx', desc: 'Enable a service to auto-start on boot.' },
+          { cmd: 'journalctl -u nginx -f', desc: 'Stream live systemd service logs.' },
         ]
       },
       {
@@ -1289,9 +1540,9 @@ const TOOLS = [
           { cmd: 'export MY_VAR=value', desc: 'Set an environment variable for the current shell session.' },
           { cmd: 'history | grep "docker"', desc: 'Search command history for a specific term.' },
         ]
-      },
+      }
     ]
-  },
+  }
 ];
 
 // ─────────────────────────────────────────────────────
