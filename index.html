@@ -682,7 +682,7 @@ const TOOLS = [
     color: '#FF9900',
     bg: '#1a1200',
     desc: 'Amazon Web Services',
-    note: 'Install: <code>brew install awscli</code>. Configure with <code>aws configure</code>. Use <code>--profile</code> to switch accounts, <code>--region</code> to override region.',
+    note: 'Install — Mac: <code>brew install awscli</code> | Linux: <code>sudo apt install awscli</code> or <code>pip install awscli</code> | Windows: <code>winget install Amazon.AWSCLI</code> or download the MSI from aws.amazon.com/cli. Configure with <code>aws configure</code>. Use <code>--profile</code> to switch accounts, <code>--region</code> to override region. Power Queries require <code>jq</code> — Mac: <code>brew install jq</code> | Linux: <code>sudo apt install jq</code> | Windows: <code>winget install jqlang.jq</code>.',
     categories: [
       {
         name: 'Setup & Config',
@@ -883,6 +883,41 @@ const TOOLS = [
         ]
       },
       {
+        name: 'Power Queries (jq)',
+        commands: [
+          { cmd: 'aws ec2 describe-instances | jq -r \'.Reservations[].Instances[]|.InstanceId+" "+.InstanceType+" "+(.Tags[]|select(.Key=="Name").Value)\'', desc: 'List all EC2 instances showing ID, type, and Name tag in a clean single line per instance.' },
+          { cmd: 'aws ec2 describe-instances | jq -r \'.Reservations[].Instances[]|select(.State.Name=="running")|.InstanceId+" "+.InstanceType+" "+.PrivateIpAddress+" "+(.Tags[]|select(.Key=="Name").Value)\'', desc: 'List only running EC2 instances with ID, type, private IP, and name.' },
+          { cmd: 'aws ec2 describe-instances --query \'Reservations[*].Instances[?not_null(PublicIpAddress)]\' | jq -r \'.[][]|.PublicIpAddress+" "+(.Tags[]|select(.Key=="Name").Value)\'', desc: 'List all EC2 instances that have a public IP, showing IP and name. Useful for /etc/hosts updates.' },
+          { cmd: 'aws ec2 describe-instances --filters Name=instance-state-name,Values=stopped | jq -r \'.Reservations[].Instances[]|.InstanceId+" "+(.Tags[]|select(.Key=="Name").Value)\'', desc: 'List all stopped EC2 instances with their names. Good for finding forgotten instances costing you storage.' },
+          { cmd: 'aws ec2 describe-security-groups | jq -r \'.SecurityGroups[]|.GroupId+" "+.GroupName\'', desc: 'List all security groups showing ID and name in a clean readable format.' },
+          { cmd: 'aws ec2 describe-instances --instance-ids i-0abc1234 | jq -r \'.Reservations[].Instances[].SecurityGroups[]|.GroupId+" "+.GroupName\'', desc: 'Print all security groups attached to a specific EC2 instance.' },
+          { cmd: 'aws ec2 describe-security-groups --group-ids sg-0abc1234 | jq -r \'.SecurityGroups[].IpPermissions[]|. as $p|(.IpRanges[].CidrIp+" "+($p.ToPort|tostring))\'', desc: 'Print inbound rules for a security group showing allowed CIDR and port.' },
+          { cmd: 'aws ec2 describe-vpcs | jq -r \'.Vpcs[]|.VpcId+" "+(.Tags[]|select(.Key=="Name").Value)+" "+.CidrBlock\'', desc: 'List all VPCs showing VPC ID, name tag, and CIDR block.' },
+          { cmd: 'aws ec2 describe-subnets | jq -r \'.Subnets[]|.SubnetId+" "+.CidrBlock+" "+.AvailabilityZone+" "+(.Tags[]?|select(.Key=="Name").Value)\'', desc: 'List all subnets with ID, CIDR, AZ, and name. Great for quickly mapping your network layout.' },
+          { cmd: 'aws ec2 describe-volumes | jq -r \'.Volumes[]|.VolumeId+" "+.State+" "+(.Size|tostring)+"GB "+.AvailabilityZone\'', desc: 'List all EBS volumes with ID, state, size, and AZ. Spot unattached volumes wasting money.' },
+          { cmd: 'aws rds describe-db-instances | jq -r \'.DBInstances[]|.DBInstanceIdentifier+" "+.DBInstanceClass+" "+.Endpoint.Address\'', desc: 'List all RDS instances showing identifier, instance class, and endpoint address in one line.' },
+          { cmd: 'aws rds describe-db-clusters | jq -r \'.DBClusters[]|.DBClusterIdentifier+" "+.Endpoint+" "+.Status\'', desc: 'List all RDS Aurora clusters with identifier, writer endpoint, and status.' },
+          { cmd: 'aws lambda list-functions | jq -r \'.Functions[]|.FunctionName+" "+.Runtime+" "+(.MemorySize|tostring)+"MB"\'', desc: 'List all Lambda functions with name, runtime, and memory size.' },
+          { cmd: 'aws lambda list-functions | jq -r \'.Functions[]|select(.Runtime=="python3.9")|.FunctionName\'', desc: 'List only Lambda functions running a specific runtime. Useful for finding functions to upgrade.' },
+          { cmd: 'aws lambda get-function --function-name my-fn | jq -r \'.Code.Location\'', desc: 'Get the pre-signed S3 URL to download the current Lambda function code.' },
+          { cmd: 'aws ecs list-services --cluster my-cluster | jq -r \'.serviceArns[]\'  | xargs -I{} aws ecs describe-services --cluster my-cluster --services {} | jq -r \'.services[]|.serviceName+" "+(.runningCount|tostring)+"/"+(.desiredCount|tostring)\'', desc: 'List all ECS services in a cluster showing name and running/desired task counts.' },
+          { cmd: 'aws iam list-users | jq -r \'.Users[]|.UserName+" "+.UserId+" "+.CreateDate\'', desc: 'List all IAM users with username, ID, and creation date.' },
+          { cmd: 'aws iam list-roles | jq -r \'.Roles[]|.RoleName+" "+.RoleId\'', desc: 'List all IAM roles with name and ID in a compact format.' },
+          { cmd: 'aws iam list-access-keys --user-name myuser | jq -r \'.AccessKeyMetadata[]|.AccessKeyId+" "+.Status+" "+.CreateDate\'', desc: 'Show all access keys for a user with their status and creation date.' },
+          { cmd: 'aws s3api list-buckets | jq -r \'.Buckets[]|.Name+" "+.CreationDate\'', desc: 'List all S3 buckets with their creation date.' },
+          { cmd: 'aws cloudwatch describe-alarms | jq -r \'.MetricAlarms[]|.AlarmName+" "+.Namespace+" "+.StateValue\'', desc: 'List all CloudWatch alarms showing name, metric namespace, and current state.' },
+          { cmd: 'aws cloudwatch describe-alarms | jq -r \'.MetricAlarms[]|select(.StateValue=="ALARM")|.AlarmName\'', desc: 'List only alarms currently in ALARM state. Quick way to see what is firing right now.' },
+          { cmd: 'aws cloudfront list-distributions | jq -r \'.DistributionList.Items[]|.DomainName+" "+.Origins.Items[0].DomainName\'', desc: 'List all CloudFront distributions showing their CloudFront domain and origin domain.' },
+          { cmd: 'aws elbv2 describe-load-balancers | jq -r \'.LoadBalancers[]|.LoadBalancerName+" "+.DNSName+" "+.State.Code\'', desc: 'List all load balancers with name, DNS name, and state.' },
+          { cmd: 'aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:... | jq -r \'.TargetHealthDescriptions[]|.Target.Id+" "+.TargetHealth.State\'', desc: 'Show health status of each target in a target group.' },
+          { cmd: 'aws sns list-subscriptions | jq -r \'.Subscriptions[]|.TopicArn+" "+.Protocol+" "+.Endpoint\'', desc: 'List all SNS subscriptions showing topic, protocol, and endpoint.' },
+          { cmd: 'aws route53 list-hosted-zones | jq -r \'.HostedZones[]|.Id+" "+.Name\'', desc: 'List all Route 53 hosted zones with ID and domain name.' },
+          { cmd: 'aws apigateway get-rest-apis | jq -r \'.items[]|.id+" "+.name\'', desc: 'List all API Gateway REST APIs with their ID and name.' },
+          { cmd: 'aws ssm describe-parameters | jq -r \'.Parameters[]|.Name+" "+.Type\'', desc: 'List all SSM Parameter Store parameters with name and type (String/SecureString).' },
+          { cmd: 'aws secretsmanager list-secrets | jq -r \'.SecretList[]|.Name+" "+.LastChangedDate\'', desc: 'List all secrets in Secrets Manager with name and last changed date.' },
+        ]
+      },
+      {
         name: 'RDS',
         commands: [
           { cmd: 'aws rds describe-db-instances', desc: 'List all RDS database instances and their status, endpoints, and engine.' },
@@ -1018,7 +1053,7 @@ const TOOLS = [
     color: '#844FBA',
     bg: '#100a1a',
     desc: 'Infrastructure as Code',
-    note: 'Install: <code>brew install terraform</code>. Always run <code>terraform init</code> before plan/apply. Use workspaces to manage environments.',
+    note: 'Install — Mac: <code>brew install terraform</code> | Linux: <code>sudo apt install terraform</code> or via tfenv | Windows: <code>winget install Hashicorp.Terraform</code> or download from developer.hashicorp.com/terraform. Always run <code>terraform init</code> before plan/apply. Use workspaces to manage environments.',
     categories: [
       {
         name: 'Init & Setup',
@@ -1090,7 +1125,7 @@ const TOOLS = [
     color: '#F05032',
     bg: '#1a0800',
     desc: 'Version control',
-    note: 'Configure identity first: <code>git config --global user.name</code> and <code>user.email</code>. Use <code>git status</code> liberally — it tells you what to do next.',
+    note: 'Install — Mac: <code>brew install git</code> | Linux: <code>sudo apt install git</code> | Windows: download from git-scm.com or <code>winget install Git.Git</code>. Configure identity first: <code>git config --global user.name</code> and <code>user.email</code>. Use <code>git status</code> liberally — it tells you what to do next.',
     categories: [
       {
         name: 'Setup',
@@ -1164,7 +1199,7 @@ const TOOLS = [
     color: '#EE3333',
     bg: '#1a0505',
     desc: 'Automation & config mgmt',
-    note: 'Install: <code>pip install ansible</code>. Configure your inventory in <code>/etc/ansible/hosts</code> or use <code>-i inventory.ini</code>. Test connectivity with <code>ansible all -m ping</code>.',
+    note: 'Install — Mac: <code>brew install ansible</code> | Linux: <code>sudo apt install ansible</code> or <code>pip install ansible</code> | Windows: Ansible does not run natively on Windows — use WSL2 or a Linux VM. Configure your inventory in <code>/etc/ansible/hosts</code> or use <code>-i inventory.ini</code>. Test connectivity with <code>ansible all -m ping</code>.',
     categories: [
       {
         name: 'Ad-hoc Commands',
@@ -1231,7 +1266,7 @@ const TOOLS = [
     color: '#2496ED',
     bg: '#040f1e',
     desc: 'Container platform',
-    note: 'Install Docker Desktop from <code>docker.com</code>. Use <code>docker compose</code> for multi-container apps. Always tag images before pushing to a registry.',
+    note: 'Install — Mac &amp; Windows: download Docker Desktop from docker.com (includes Compose) | Linux: <code>sudo apt install docker.io docker-compose-plugin</code> then <code>sudo usermod -aG docker $USER</code> and log out/in. Use <code>docker compose</code> for multi-container apps. Always tag images before pushing to a registry.',
     categories: [
       {
         name: 'Compose',
@@ -1311,7 +1346,7 @@ const TOOLS = [
     color: '#326CE5',
     bg: '#040c1e',
     desc: 'Container orchestration',
-    note: 'Install: <code>brew install kubectl</code>. Set context with <code>kubectl config use-context</code>. Always check your current namespace before applying changes.',
+    note: 'Install kubectl — Mac: <code>brew install kubectl</code> | Linux: <code>sudo apt install kubectl</code> or <code>curl -LO https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl</code> | Windows: <code>winget install Kubernetes.kubectl</code> or via Docker Desktop. Set context with <code>kubectl config use-context</code>. Always check your current namespace before applying changes.',
     categories: [
       {
         name: 'Context & Config',
@@ -1393,7 +1428,7 @@ const TOOLS = [
     color: '#0F7490',
     bg: '#020d12',
     desc: 'Kubernetes package manager',
-    note: 'Install: <code>brew install helm</code>. Add repos before installing charts. Always use <code>--dry-run</code> to preview changes before applying them to a cluster.',
+    note: 'Install — Mac: <code>brew install helm</code> | Linux: <code>curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</code> | Windows: <code>winget install Helm.Helm</code> or <code>choco install kubernetes-helm</code>. Add repos before installing charts. Always use <code>--dry-run</code> to preview changes before applying them to a cluster.',
     categories: [
       {
         name: 'Chart Development',
@@ -1458,7 +1493,7 @@ const TOOLS = [
     color: '#22C55E',
     bg: '#011008',
     desc: 'Shell & system commands',
-    note: 'Universal Linux/macOS commands. Use <code>man COMMAND</code> for full documentation on any command. Prefix destructive commands with <code>echo</code> to preview before running.',
+    note: 'These are universal Linux/macOS shell commands — no installation needed on Linux or Mac. Windows users can run these via WSL2 (<code>wsl --install</code> in PowerShell) or Git Bash. Use <code>man COMMAND</code> for full documentation on any command. Prefix destructive commands with <code>echo</code> to preview before running.',
     categories: [
       {
         name: 'Archives & Compression',
