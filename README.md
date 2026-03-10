@@ -16,15 +16,15 @@
 | Tool | Commands | Areas Covered |
 |------|----------|---------------|
 | ☁️ **AWS CLI** | 254 | S3, EC2, RDS, IAM, Lambda, CloudFormation, CloudWatch and Others|
-| 🟣 **Terraform** | 28 | Init, Plan, Apply, State, Workspaces, Import |
-| 🐳 **Docker** | 35 | Images, Containers, Volumes, Networks, Compose |
-| ☸ **Kubernetes** | 32 | Pods, Deployments, Services, Scaling, ConfigMaps |
-| ⎇ **Git** | 30 | Branching, Remote, Stash, Rebase, Reset |
-| 🔴 **Ansible** | 26 | Inventory, Playbooks, Vault, Galaxy |
-| ⛵ **Helm** | 24 | Repos, Install, Upgrade, Rollback, Chart Dev |
-| 🐧 **Linux** | 42 | Files, Processes, Network, Permissions, Archives |
+| 🟣 **Terraform** | 30 | Init, Plan, Apply, State, Workspaces, Import |
+| ⎇ **Git** | 37 | Branching, Remote, Stash, Rebase, Reset |
+| 🔴 **Ansible** | 30 | Inventory, Playbooks, Vault, Galaxy |
+| 🐳 **Docker** | 43 | Images, Containers, Volumes, Networks, Compose |
+| ☸ **Kubernetes** | 40 | Pods, Deployments, Services, Scaling, ConfigMaps |
+| ⛵ **Helm** | 28 | Repos, Install, Upgrade, Rollback, Chart Dev |
+| 🐧 **Linux** | 51 | Files, Processes, Network, Permissions, Archives |
 
-**300+ commands total** - all with plain-English descriptions and one-click copy.
+**500+ commands total** - all with plain-English descriptions and one-click copy.
 
 ---
 ## Screenshots
