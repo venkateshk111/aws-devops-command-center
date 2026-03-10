@@ -15,7 +15,7 @@
 
 | Tool | Commands | Areas Covered |
 |------|----------|---------------|
-| ☁️ **AWS CLI** | 224 | S3, EC2, RDS, IAM, Lambda, CloudFormation, CloudWatch and Others|
+| ☁️ **AWS CLI** | 254 | S3, EC2, RDS, IAM, Lambda, CloudFormation, CloudWatch and Others|
 | 🟣 **Terraform** | 28 | Init, Plan, Apply, State, Workspaces, Import |
 | 🐳 **Docker** | 35 | Images, Containers, Volumes, Networks, Compose |
 | ☸ **Kubernetes** | 32 | Pods, Deployments, Services, Scaling, ConfigMaps |
