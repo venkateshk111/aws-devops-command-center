@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AWS DevOps Command Center</title>
-<meta name="description" content="600+ searchable AWS CLI, Terraform, Docker, Kubernetes, Git, Ansible, Helm and Linux commands. Search in plain English. One-click copy. Free, no login required.">
+<meta name="description" content="300+ searchable AWS CLI, Terraform, Docker, Kubernetes, Git, Ansible, Helm and Linux commands. Search in plain English. One-click copy. Free, no login required.">
 <meta name="keywords" content="AWS CLI, Terraform, Docker, Kubernetes, DevOps, command reference, cheatsheet, cloud commands, AWS cheatsheet">
 <meta name="author" content="aws-devops-command-center">
 <meta property="og:title" content="AWS DevOps Command Center">
-<meta property="og:description" content="600+ searchable cloud & DevOps commands. Type in plain English, copy in one click.">
+<meta property="og:description" content="300+ searchable cloud & DevOps commands. Type in plain English, copy in one click.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#07090d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1648,36 +1648,6 @@ const TOOLS = [
           { cmd: 'openclaw message broadcast --message "Maintenance in 10 min" --channel telegram', desc: 'Broadcast a message to all recipients on a channel.' },
           { cmd: 'openclaw pairing list', desc: 'List pending DM pairing requests across all channels.' },
           { cmd: 'openclaw pairing approve telegram ABC123', desc: 'Approve a pairing request using its channel and code.' },
-        ]
-      },
-      {
-        name: 'ClawHub Skills',
-        commands: [
-          { cmd: 'openclaw skills search "aws"', desc: 'Search ClawHub for AWS-related skills before installing. Always browse first.' },
-          { cmd: 'openclaw skills install aws-infra', desc: '⭐ AWS — Chat-driven AWS infrastructure management via AWS CLI. Covers EC2, S3, Lambda, VPC, IAM, and CloudWatch. Requires AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.' },
-          { cmd: 'openclaw skills install aws-security-scanner', desc: '⭐ AWS — Scans your AWS account for security misconfigurations, open ports, overly permissive IAM policies, and exposed S3 buckets.' },
-          { cmd: 'openclaw skills install aws-solution-architect', desc: '⭐ AWS — Designs AWS architectures and recommends the right services for your use case. Great for planning new workloads.' },
-          { cmd: 'openclaw skills install aws-ecs-monitor', desc: '⭐ AWS — Production health monitoring for ECS clusters and tasks using CloudWatch. Surfaces container failures and resource alerts.' },
-          { cmd: 'openclaw skills install awscli', desc: 'AWS — Manage AWS Lightsail and EC2 instances using conversational AWS CLI commands.' },
-          { cmd: 'openclaw skills install sovereign-aws-cost-optimizer', desc: 'AWS — Analyses your AWS infrastructure for cost savings opportunities. Identifies idle resources, oversized instances, and unused services.' },
-          { cmd: 'openclaw skills install aws-agentcore-langgraph', desc: 'AWS — Deploy and manage production LangGraph agents on AWS AgentCore.' },
-          { cmd: 'openclaw skills install docker-essentials', desc: '⭐ DevOps — Build, tag, and run containers using production-ready Docker workflows. Describe what you want in plain language and the agent handles the syntax.' },
-          { cmd: 'openclaw skills install k8-multicluster', desc: '⭐ DevOps — Manage multiple Kubernetes clusters with safe context switching. Useful for teams running dev, staging, and production on separate clusters.' },
-          { cmd: 'openclaw skills install cicd-pipeline', desc: '⭐ DevOps — Create, debug, monitor, and trigger CI/CD pipelines across GitHub Actions, GitLab CI, and Jenkins. Detects broken builds and suggests fixes.' },
-          { cmd: 'openclaw skills install agentic-devops', desc: '⭐ DevOps — Production-grade DevOps toolkit bundling Docker orchestration, process management, log analysis, and health monitoring into one skill.' },
-          { cmd: 'openclaw skills install azure-devops', desc: 'DevOps — Full CRUD for Azure DevOps projects, repos, boards, work items, pull requests, and pipelines via the REST API and Azure CLI.' },
-          { cmd: 'openclaw skills install hetzner', desc: 'DevOps — Control Hetzner Cloud VPS resources using the hcloud CLI. Popular choice for self-hosters and budget cloud workloads.' },
-          { cmd: 'openclaw skills install tavily-web-search', desc: '⭐ General — Most widely installed search skill on ClawHub. Connects to Tavily API optimized for AI agents, returning structured results the agent can reason over. Requires TAVILY_API_KEY.' },
-          { cmd: 'openclaw skills install github', desc: '⭐ General — Manage GitHub repos, issues, PRs, and Actions workflows conversationally. Great for code review, branch management, and release automation.' },
-          { cmd: 'openclaw skills install ai-daily-digest', desc: 'General — Fetches and scores top articles from 90+ tech blogs daily. Get an AI-curated morning briefing sent to your phone via WhatsApp or Telegram.' },
-          { cmd: 'openclaw skills install biz-reporter', desc: 'General — Automated business intelligence reports pulling data from Google Analytics GA4, Google Search Console, and Stripe into a single digest.' },
-          { cmd: 'openclaw skills install auto-pr-merger', desc: 'General — Automates the workflow of checking out a GitHub branch, running checks, and merging pull requests that meet your criteria.' },
-          { cmd: 'openclaw skills install sovereign-api-hardener', desc: 'General — Hardens API endpoints against common attacks. Analyses your endpoints and applies security best-practice recommendations.' },
-          { cmd: 'openclaw skills install skill-hub', desc: 'Utility — Skill discovery, security vetting, and installation helper. Searches 3000+ curated skills, scores credibility, and detects prompt injection patterns before you install.' },
-          { cmd: 'npx clawhub@latest install aws-infra', desc: 'Alternative install method using the clawhub CLI directly instead of the openclaw skills command. Both work the same way.' },
-          { cmd: 'openclaw skills update --all', desc: 'Update all installed ClawHub skills to their latest versions at once.' },
-          { cmd: 'openclaw skills list --eligible', desc: 'After installing skills, verify which ones are fully ready — all required binaries and env vars are present.' },
-          { cmd: 'openclaw skills info aws-infra', desc: 'Inspect a skill\'s metadata, required environment variables, and dependencies before trusting it with your infrastructure.' },
         ]
       },
       {
