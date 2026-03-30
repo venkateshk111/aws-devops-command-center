@@ -23,8 +23,9 @@
 | ☸ **Kubernetes** | 40 | Pods, Deployments, Services, Scaling, ConfigMaps |
 | ⛵ **Helm** | 28 | Repos, Install, Upgrade, Rollback, Chart Dev |
 | 🐧 **Linux** | 51 | Files, Processes, Network, Permissions, Archives |
+| 🦞 **OpenClaw** | 129 | OpenClawAI agent platform CLI |
 
-**500+ commands total** - all with plain-English descriptions and one-click copy.
+**600+ commands total** - all with plain-English descriptions and one-click copy.
 
 ---
 ## Screenshots

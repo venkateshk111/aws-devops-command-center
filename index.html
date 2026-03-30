@@ -635,7 +635,7 @@ body {
     <div class="brand-icon">⚡</div>
     <div class="brand-text">
       <div class="brand-name">AWS Command Center</div>
-      <div class="brand-sub">AWS DevOps CLI Reference</div>
+      <div class="brand-sub">AWS AWS DevOps CLI Reference</div>
     </div>
   </div>
   <div class="search-wrap">
@@ -1574,6 +1574,192 @@ const TOOLS = [
           { cmd: 'env', desc: 'Print all environment variables.' },
           { cmd: 'export MY_VAR=value', desc: 'Set an environment variable for the current shell session.' },
           { cmd: 'history | grep "docker"', desc: 'Search command history for a specific term.' },
+        ]
+      }
+    ]
+  },
+
+  {
+    id: 'openclaw',
+    name: 'OpenClaw',
+    short: '🦞',
+    color: '#FF5A2D',
+    bg: '#1a0800',
+    desc: 'AI agent platform CLI',
+    note: 'Install — Mac/Linux: <code>npm install -g openclaw</code> or <code>curl -fsSL https://get.openclaw.ai | bash</code> | Windows: <code>npm install -g openclaw</code> (requires Node 18+). Start with <code>openclaw setup</code> then <code>openclaw onboard</code>. Docs: <code>openclaw docs</code>.',
+    categories: [
+      {
+        name: 'Setup & Config',
+        commands: [
+          { cmd: 'openclaw setup', desc: 'Initialize config and workspace. First command to run after installing OpenClaw.' },
+          { cmd: 'openclaw setup --wizard', desc: 'Run the full onboarding wizard during setup.' },
+          { cmd: 'openclaw onboard', desc: 'Interactive onboarding for gateway, workspace, and skills. Run after setup.' },
+          { cmd: 'openclaw onboard --mode local', desc: 'Onboard in local mode (gateway runs on your machine).' },
+          { cmd: 'openclaw onboard --mode remote --remote-url https://my-gateway.example.com --remote-token mytoken', desc: 'Onboard connecting to a remote gateway.' },
+          { cmd: 'openclaw onboard --non-interactive --mode local --anthropic-api-key sk-ant-...', desc: 'Non-interactive onboard with Anthropic API key. Useful for scripted installs.' },
+          { cmd: 'openclaw configure', desc: 'Interactive configuration wizard for models, channels, skills, and gateway.' },
+          { cmd: 'openclaw config get agents.defaults.model.primary', desc: 'Get a specific config value by dot-path.' },
+          { cmd: 'openclaw config set agents.defaults.model.primary claude-sonnet-4-5', desc: 'Set a config value. Supports JSON5 parsing for complex values.' },
+          { cmd: 'openclaw config set --dry-run agents.defaults.model.primary claude-sonnet-4-5', desc: 'Validate a config change without writing to disk.' },
+          { cmd: 'openclaw config unset agents.defaults.model.primary', desc: 'Remove a config value, reverting it to default.' },
+          { cmd: 'openclaw config file', desc: 'Print the path to the active openclaw.json config file.' },
+          { cmd: 'openclaw config validate', desc: 'Validate the current config against the schema without starting the gateway.' },
+          { cmd: 'openclaw doctor', desc: 'Run health checks and quick fixes for config, gateway, and legacy services.' },
+          { cmd: 'openclaw doctor --deep', desc: 'Deep scan — checks for extra or conflicting gateway installs on the system.' },
+          { cmd: 'openclaw update', desc: 'Update OpenClaw to the latest version.' },
+        ]
+      },
+      {
+        name: 'Agents & Sessions',
+        commands: [
+          { cmd: 'openclaw agent --message "Summarise my last 5 emails"', desc: 'Run one agent turn via the gateway. The core command for one-shot tasks.' },
+          { cmd: 'openclaw agent --message "Deploy the staging branch" --to myphone', desc: 'Run an agent turn and deliver the response to a specific destination.' },
+          { cmd: 'openclaw agent --message "Check server health" --local', desc: 'Run the agent embedded locally without going through the gateway.' },
+          { cmd: 'openclaw agent --message "Write a haiku" --thinking high', desc: 'Run with extended thinking enabled (supported models only).' },
+          { cmd: 'openclaw agents list', desc: 'List all configured isolated agents with their IDs and workspaces.' },
+          { cmd: 'openclaw agents add my-agent --workspace ~/agents/my-agent', desc: 'Add a new isolated agent with its own workspace and auth.' },
+          { cmd: 'openclaw agents add my-agent --bind discord:work --bind telegram', desc: 'Add an agent and bind it to specific channel accounts.' },
+          { cmd: 'openclaw agents bind --agent my-agent --bind slack:team', desc: 'Add a channel routing binding to an existing agent.' },
+          { cmd: 'openclaw agents unbind --agent my-agent --bind discord:work', desc: 'Remove a channel routing binding from an agent.' },
+          { cmd: 'openclaw agents bindings --agent my-agent', desc: 'List all channel routing bindings for a specific agent.' },
+          { cmd: 'openclaw agents delete my-agent --force', desc: 'Delete an agent and prune its workspace and state.' },
+          { cmd: 'openclaw sessions', desc: 'List stored conversation sessions with their IDs and last activity.' },
+          { cmd: 'openclaw sessions --active 60', desc: 'List only sessions active in the last 60 minutes.' },
+          { cmd: 'openclaw sessions --json', desc: 'Output sessions as JSON for scripting.' },
+          { cmd: 'openclaw acp', desc: 'Run the ACP bridge that connects IDEs (like Cursor or VS Code) to the gateway.' },
+        ]
+      },
+      {
+        name: 'Channels & Messaging',
+        commands: [
+          { cmd: 'openclaw channels list', desc: 'Show all configured channel accounts and their auth profiles.' },
+          { cmd: 'openclaw channels status', desc: 'Check gateway reachability and health of all configured channels.' },
+          { cmd: 'openclaw channels status --probe', desc: 'Run extra live connectivity checks on each channel.' },
+          { cmd: 'openclaw channels logs', desc: 'Show recent logs from all configured channels.' },
+          { cmd: 'openclaw channels logs --channel telegram --lines 100', desc: 'Show the last 100 log lines for a specific channel.' },
+          { cmd: 'openclaw channels add --channel telegram --account alerts --name "Alerts Bot" --token $TELEGRAM_BOT_TOKEN', desc: 'Add a Telegram bot channel account non-interactively.' },
+          { cmd: 'openclaw channels add --channel discord --account work --name "Work Bot" --token $DISCORD_BOT_TOKEN', desc: 'Add a Discord bot channel account non-interactively.' },
+          { cmd: 'openclaw channels add --channel slack', desc: 'Add a Slack channel interactively via wizard.' },
+          { cmd: 'openclaw channels remove --channel discord --account work --delete', desc: 'Remove and delete a channel account config entry.' },
+          { cmd: 'openclaw channels login --channel whatsapp', desc: 'Log in to WhatsApp Web via QR code scan.' },
+          { cmd: 'openclaw channels logout --channel whatsapp', desc: 'Log out of a WhatsApp Web session.' },
+          { cmd: 'openclaw message send --target +15555550123 --message "Hello from OpenClaw"', desc: 'Send a message to a phone number (WhatsApp/Signal).' },
+          { cmd: 'openclaw message send --channel discord --target channel:123456 --message "Deploy complete"', desc: 'Send a message to a specific Discord channel.' },
+          { cmd: 'openclaw message broadcast --message "Maintenance in 10 min" --channel telegram', desc: 'Broadcast a message to all recipients on a channel.' },
+          { cmd: 'openclaw pairing list', desc: 'List pending DM pairing requests across all channels.' },
+          { cmd: 'openclaw pairing approve telegram ABC123', desc: 'Approve a pairing request using its channel and code.' },
+        ]
+      },
+      {
+        name: 'Gateway',
+        commands: [
+          { cmd: 'openclaw gateway', desc: 'Start the WebSocket gateway (foreground). The core server process for OpenClaw.' },
+          { cmd: 'openclaw gateway --port 8080 --bind loopback', desc: 'Start the gateway on a specific port, bound to loopback only.' },
+          { cmd: 'openclaw gateway --tailscale serve', desc: 'Start the gateway and expose it over Tailscale Serve.' },
+          { cmd: 'openclaw gateway service install', desc: 'Install the gateway as a system service (launchd on Mac, systemd on Linux, schtasks on Windows).' },
+          { cmd: 'openclaw gateway service start', desc: 'Start the gateway background service.' },
+          { cmd: 'openclaw gateway service stop', desc: 'Stop the gateway background service.' },
+          { cmd: 'openclaw gateway service restart', desc: 'Restart the gateway background service. Use after config changes.' },
+          { cmd: 'openclaw gateway service status', desc: 'Show gateway service status including config path, probe target, and RPC health.' },
+          { cmd: 'openclaw gateway service uninstall', desc: 'Uninstall the gateway system service.' },
+          { cmd: 'openclaw gateway health', desc: 'Fetch health status from the running gateway via RPC.' },
+          { cmd: 'openclaw gateway probe', desc: 'Probe the gateway to verify connectivity and auth.' },
+          { cmd: 'openclaw logs --follow', desc: 'Tail gateway logs in real time with color formatting.' },
+          { cmd: 'openclaw logs --limit 200', desc: 'Show the last 200 gateway log lines.' },
+          { cmd: 'openclaw logs --json', desc: 'Output gateway logs as line-delimited JSON for scripting.' },
+          { cmd: 'openclaw status', desc: 'Show linked session health, recent recipients, and gateway status.' },
+          { cmd: 'openclaw status --deep', desc: 'Full diagnosis including live channel probes.' },
+          { cmd: 'openclaw status --usage', desc: 'Show model provider usage and quota information.' },
+          { cmd: 'openclaw health', desc: 'Quick gateway health check. Good first step when something seems broken.' },
+        ]
+      },
+      {
+        name: 'Memory & Skills',
+        commands: [
+          { cmd: 'openclaw memory status', desc: 'Show memory index stats — file count, index size, and last indexed time.' },
+          { cmd: 'openclaw memory index', desc: 'Reindex all MEMORY.md and memory/*.md files for vector search.' },
+          { cmd: 'openclaw memory search "AWS deployment process"', desc: 'Semantic search over your memory files. Finds relevant content even without exact keyword match.' },
+          { cmd: 'openclaw memory search --query "standup notes last week"', desc: 'Search memory using the --query flag (alternative syntax).' },
+          { cmd: 'openclaw skills list', desc: 'List all available skills and their readiness status.' },
+          { cmd: 'openclaw skills list --eligible', desc: 'List only skills whose requirements are fully met.' },
+          { cmd: 'openclaw skills info my-skill', desc: 'Show details, dependencies, and status for a specific skill.' },
+          { cmd: 'openclaw skills check', desc: 'Show a summary of ready vs missing skill requirements.' },
+          { cmd: 'openclaw skills search "github"', desc: 'Search ClawHub for available skills matching a term.' },
+          { cmd: 'openclaw skills install github-actions', desc: 'Install a skill from ClawHub into the active workspace.' },
+          { cmd: 'openclaw skills update --all', desc: 'Update all tracked ClawHub skills to their latest versions.' },
+        ]
+      },
+      {
+        name: 'Models',
+        commands: [
+          { cmd: 'openclaw models list', desc: 'List all available models across configured providers.' },
+          { cmd: 'openclaw models list --provider anthropic', desc: 'List only models from a specific provider.' },
+          { cmd: 'openclaw models status', desc: 'Show current model config, auth profiles, and OAuth expiry status.' },
+          { cmd: 'openclaw models status --probe', desc: 'Run live requests to verify model auth is working (may consume tokens).' },
+          { cmd: 'openclaw models set claude-sonnet-4-5', desc: 'Set the primary model for all agent interactions.' },
+          { cmd: 'openclaw models set-image claude-opus-4', desc: 'Set the primary model used for image tasks.' },
+          { cmd: 'openclaw models aliases list', desc: 'List all model aliases (shorthand names for model IDs).' },
+          { cmd: 'openclaw models aliases add fast claude-haiku-4-5', desc: 'Create a "fast" alias pointing to a specific model.' },
+          { cmd: 'openclaw models aliases remove fast', desc: 'Remove a model alias.' },
+          { cmd: 'openclaw models fallbacks list', desc: 'List models in the fallback chain used when the primary model fails.' },
+          { cmd: 'openclaw models fallbacks add claude-haiku-4-5', desc: 'Add a model to the fallback chain.' },
+          { cmd: 'openclaw models fallbacks clear', desc: 'Clear the entire model fallback chain.' },
+          { cmd: 'openclaw models scan', desc: 'Scan for available models from configured providers and optionally set the best one as default.' },
+          { cmd: 'openclaw models auth add', desc: 'Interactively add auth credentials for a model provider.' },
+          { cmd: 'openclaw models auth setup-token --provider anthropic', desc: 'Set up an Anthropic auth token (setup-token flow).' },
+        ]
+      },
+      {
+        name: 'Plugins',
+        commands: [
+          { cmd: 'openclaw plugins list', desc: 'List all installed plugins and their enabled/disabled status.' },
+          { cmd: 'openclaw plugins list --json', desc: 'Output plugin list as JSON for scripting.' },
+          { cmd: 'openclaw plugins inspect my-plugin', desc: 'Show full details and config for a specific plugin.' },
+          { cmd: 'openclaw plugins install my-plugin@marketplace', desc: 'Install a plugin from the marketplace.' },
+          { cmd: 'openclaw plugins install ./my-plugin.tgz', desc: 'Install a plugin from a local archive file.' },
+          { cmd: 'openclaw plugins install /path/to/my-plugin', desc: 'Install a plugin from a local directory path.' },
+          { cmd: 'openclaw plugins enable my-plugin', desc: 'Enable a disabled plugin. Requires gateway restart to take effect.' },
+          { cmd: 'openclaw plugins disable my-plugin', desc: 'Disable a plugin without uninstalling it.' },
+          { cmd: 'openclaw plugins uninstall my-plugin', desc: 'Uninstall a plugin completely.' },
+          { cmd: 'openclaw plugins update my-plugin', desc: 'Update a specific plugin to its latest version.' },
+          { cmd: 'openclaw plugins doctor', desc: 'Report load errors and issues across all installed plugins.' },
+          { cmd: 'openclaw plugins marketplace list marketplace-name', desc: 'Browse marketplace entries before installing.' },
+        ]
+      },
+      {
+        name: 'Security & Secrets',
+        commands: [
+          { cmd: 'openclaw security audit', desc: 'Audit config and local state for common security issues.' },
+          { cmd: 'openclaw security audit --deep', desc: 'Best-effort live gateway probe as part of the security audit.' },
+          { cmd: 'openclaw security audit --fix', desc: 'Tighten safe defaults and fix file permissions on state/config.' },
+          { cmd: 'openclaw secrets audit', desc: 'Scan for plaintext credential residues, unresolved refs, and precedence drift.' },
+          { cmd: 'openclaw secrets reload', desc: 'Re-resolve secret refs and atomically swap the runtime snapshot. Use after updating credentials.' },
+          { cmd: 'openclaw secrets configure', desc: 'Interactive helper for setting up secret providers and SecretRef mappings.' },
+          { cmd: 'openclaw secrets apply --from plan.json', desc: 'Apply a previously generated secrets plan file.' },
+          { cmd: 'openclaw secrets apply --from plan.json --dry-run', desc: 'Preview what a secrets plan would change without applying it.' },
+        ]
+      },
+      {
+        name: 'System & Cron',
+        commands: [
+          { cmd: 'openclaw cron list', desc: 'List all scheduled cron jobs and their next run times.' },
+          { cmd: 'openclaw cron status', desc: 'Show cron scheduler status and enabled/disabled state.' },
+          { cmd: 'openclaw cron add --name "daily-report" --every 24h --message "Generate my daily summary"', desc: 'Create a cron job that sends a message to the agent every 24 hours.' },
+          { cmd: 'openclaw cron add --name "morning-standup" --at "09:00" --message "What is on my calendar today?"', desc: 'Create a cron job that fires at a specific time each day.' },
+          { cmd: 'openclaw cron enable job-id', desc: 'Enable a previously disabled cron job.' },
+          { cmd: 'openclaw cron disable job-id', desc: 'Disable a cron job without deleting it.' },
+          { cmd: 'openclaw cron run job-id', desc: 'Manually trigger a cron job immediately.' },
+          { cmd: 'openclaw cron runs --id job-id --limit 10', desc: 'Show the last 10 run history entries for a cron job.' },
+          { cmd: 'openclaw cron rm job-id', desc: 'Delete a cron job permanently.' },
+          { cmd: 'openclaw system event --text "Deployment completed successfully"', desc: 'Enqueue a system event and optionally trigger a heartbeat.' },
+          { cmd: 'openclaw system heartbeat enable', desc: 'Enable the system heartbeat.' },
+          { cmd: 'openclaw system heartbeat last', desc: 'Show the timestamp of the last heartbeat.' },
+          { cmd: 'openclaw system presence', desc: 'List current system presence entries from the gateway.' },
+          { cmd: 'openclaw backup create', desc: 'Create a backup of OpenClaw config and state.' },
+          { cmd: 'openclaw backup verify', desc: 'Verify the integrity of a previously created backup.' },
+          { cmd: 'openclaw reset --scope config', desc: 'Reset config only, preserving credentials and sessions.' },
+          { cmd: 'openclaw reset --scope full --yes', desc: 'Full reset of config, credentials, sessions, and workspace.' },
+          { cmd: 'openclaw uninstall --all --yes', desc: 'Uninstall the gateway service and remove all local data.' },
         ]
       }
     ]
