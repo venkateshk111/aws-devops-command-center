@@ -1825,15 +1825,17 @@ function toggleTheme() {
 const SYNONYMS = {
   // listing / viewing
   list:       ['list','ls','describe','get','show','view','all','ps','find'],
-  show:       ['show','describe','get','list','view','display','print','info','inspect'],
-  view:       ['view','show','describe','get','list','display'],
+  show:       ['show','describe','get','list','view','display','print','info','inspect','see','read'],
+  view:       ['view','show','describe','get','list','display','see','read','inspect','watch','tail','stream','follow','monitor'],
   get:        ['get','describe','show','list','fetch','read','view'],
   find:       ['find','search','locate','grep','list','describe','get'],
-  check:      ['check','status','health','describe','get','info','inspect','show','verify','test','validate','ping'],
-  status:     ['status','health','check','describe','info','inspect','show','get'],
-  inspect:    ['inspect','describe','show','get','info','check','details'],
-  info:       ['info','describe','show','get','inspect','details','status'],
-  details:    ['details','describe','info','inspect','show'],
+  check:      ['check','status','health','describe','get','info','inspect','show','view','verify','test','validate','ping','watch','monitor','tail','stream','follow','read','see','list'],
+  status:     ['status','health','check','describe','info','inspect','show','get','watch'],
+  inspect:    ['inspect','describe','show','get','info','check','details','view'],
+  info:       ['info','describe','show','get','inspect','details','status','view'],
+  details:    ['details','describe','info','inspect','show','view'],
+  see:        ['see','view','show','list','describe','get','inspect','read','watch','tail','stream','follow'],
+  read:       ['read','view','show','tail','stream','follow','get','fetch','cat','less'],
 
   // creating / starting
   create:     ['create','new','add','make','init','setup','install','build','run','start','generate','scaffold','apply'],
@@ -1991,18 +1993,29 @@ const SYNONYMS = {
 };
 
 // Core match: split query into words, every word must hit something
+// ─────────────────────────────────────────────────────
+// Tokenize a string into a Set of whole words.
+// Splits on anything non-alphanumeric so "describe-instances"
+// becomes {"describe","instances"} and "confirm" stays as
+// {"confirm"} — meaning "rm" will NEVER match "confirm".
+function tokenize(s) {
+  return new Set(s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+}
+
 function matchesQuery(cmd, desc, catName, toolName, extraTags) {
   const words = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return true;
 
-  const haystack = [cmd, desc, catName, toolName, ...(extraTags||[])].join(' ').toLowerCase();
+  // Build a token set from all searchable fields
+  const raw = [cmd, desc, catName, toolName, ...(extraTags||[])].join(' ');
+  const tokens = tokenize(raw);
 
   return words.every(word => {
-    // 1. Direct substring match across all text
-    if (haystack.includes(word)) return true;
-    // 2. Synonym expansion
+    // 1. Exact whole-word match
+    if (tokens.has(word)) return true;
+    // 2. Synonym expansion — each synonym also checked as a whole word
     const syns = SYNONYMS[word] || [];
-    return syns.some(syn => haystack.includes(syn));
+    return syns.some(syn => tokens.has(syn));
   });
 }
 
@@ -2155,7 +2168,7 @@ function renderMain() {
           <div class="cmd-card" style="animation-delay:${i*15}ms">
             <div class="cmd-code-wrap">
               <code class="cmd-code">${escHtml(c.cmd)}</code>
-              <button class="copy-btn" title="Copy" onclick="copyCmd('${escJs(c.cmd)}',this)">Copy</button>
+              <button class="copy-btn" title="Copy" data-cmd="${escHtml(c.cmd)}" onclick="copyCmd(this)">Copy</button>
             </div>
             <div class="cmd-body">
               <div class="cmd-desc">${c.desc}</div>
@@ -2216,7 +2229,7 @@ function renderSearchAll() {
         <div class="cmd-card" style="animation-delay:${i*10}ms;--tool:${tool.color};--tool-dim:${hexToRgba(tool.color,0.1)}">
           <div class="cmd-code-wrap">
             <code class="cmd-code">${escHtml(c.cmd)}</code>
-            <button class="copy-btn" title="Copy" onclick="copyCmd('${escJs(c.cmd)}',this)">Copy</button>
+            <button class="copy-btn" title="Copy" data-cmd="${escHtml(c.cmd)}" onclick="copyCmd(this)">Copy</button>
           </div>
           <div class="cmd-body">
             <div class="cmd-desc">${c.desc}</div>
@@ -2261,7 +2274,8 @@ function setCat(cat) {
   renderMain();
 }
 
-function copyCmd(text, btn) {
+function copyCmd(btn) {
+  const text = btn.getAttribute('data-cmd');
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✓ Copied'; btn.classList.add('ok');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
@@ -2283,8 +2297,8 @@ document.getElementById('search').addEventListener('input', e => {
   }
 });
 
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escJs(s)   { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escJs(s)   { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 
 // Init
 renderSidebar();
